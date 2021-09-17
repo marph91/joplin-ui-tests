@@ -56,6 +56,9 @@ class Sidebar(base.Test):
     def test_drag_notebooks(self):
         self.skipTest("Drag and drop doesn't seem to work yet.")
         # https://github.com/webdriverio/webdriverio/issues/4134
+        #ActionChains(self.driver).drag_and_drop(
+        #    self.get_notebooks()[0], self.get_notebooks()[1]
+        #).perform()
 
     def test_synchronise_button(self):
         # TODO: extend

@@ -60,10 +60,10 @@ class Test(unittest.TestCase):
 
     def get_notebooks(self):
         # First match is the "All notes" button.
-        return self.notebooks_div.find_elements_by_class_name("list-item")[1:]
+        return self.notebooks_div.find_elements_by_class_name("list-item-container")[1:]
 
     def get_notes(self):
-        return self.notes_panel.find_elements_by_class_name("note-list-item")
+        return self.notelist.find_elements_by_class_name("note-list-item-container")
 
     def add_notebook(self, name: str = "test", way: str = "button", parent=None):
 
