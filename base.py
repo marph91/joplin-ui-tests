@@ -63,7 +63,7 @@ class Test(unittest.TestCase):
         return self.notebooks_div.find_elements_by_class_name("list-item-container")[1:]
 
     def get_notes(self):
-        return self.notelist.find_elements_by_class_name("note-list-item-container")
+        return self.notelist.find_elements_by_class_name("note-list-item")
 
     def add_notebook(self, name: str = "test", way: str = "button", parent=None):
 

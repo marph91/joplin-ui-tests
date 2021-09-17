@@ -41,6 +41,8 @@ class Sidebar(base.Test):
         self.assertTrue(self.notebooks_div.is_displayed())
 
     def test_show_all_notes(self):
+        # TODO: Doesn't work for many notes or small window.
+
         all_notes_button = self.notebooks_div.find_element_by_class_name("all-notes")
         all_notes_button.click()
 
@@ -56,9 +58,9 @@ class Sidebar(base.Test):
     def test_drag_notebooks(self):
         self.skipTest("Drag and drop doesn't seem to work yet.")
         # https://github.com/webdriverio/webdriverio/issues/4134
-        #ActionChains(self.driver).drag_and_drop(
+        # ActionChains(self.driver).drag_and_drop(
         #    self.get_notebooks()[0], self.get_notebooks()[1]
-        #).perform()
+        # ).perform()
 
     def test_synchronise_button(self):
         # TODO: extend
