@@ -53,6 +53,10 @@ class Sidebar(base.Test):
         # TODO: extend
         self.sidebar.find_element_by_xpath("//div/i[contains(@class, 'icon-tags')]")
 
+    def test_drag_notebooks(self):
+        self.skipTest("Drag and drop doesn't seem to work yet.")
+        # https://github.com/webdriverio/webdriverio/issues/4134
+
     def test_synchronise_button(self):
         # TODO: extend
         self.sidebar.find_element_by_xpath(
