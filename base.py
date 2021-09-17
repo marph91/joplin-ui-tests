@@ -34,7 +34,7 @@ class Test(unittest.TestCase):
             "//div[starts-with(@class, 'folders')]"
         )
 
-        cls.notes_panel = cls.driver.find_element_by_class_name("rli-noteList")
+        cls.notelist = cls.driver.find_element_by_class_name("rli-noteList")
         cls.editor = cls.driver.find_element_by_class_name("rli-editor")
 
     @staticmethod
@@ -102,3 +102,33 @@ class Test(unittest.TestCase):
         add_notebook_buttons = add_notebook_dialog.find_elements_by_tag_name("button")
 
         [b for b in add_notebook_buttons if b.text == "OK"][0].click()
+
+    def add_note(
+        self,
+        name: str = "test_note",
+        way: str = "button",
+        title: str = "test_title",
+        content: str = "test_content",
+    ):
+
+        import pyautogui
+
+        if way == "button":
+            add_note_button = self.notelist.find_element_by_class_name(
+                "new-note-button"
+            )
+            add_note_button.click()
+        elif way == "hotkey":
+            # ActionChains doesn't work.
+            pyautogui.keyDown("ctrl")
+            pyautogui.press("n")
+            pyautogui.keyUp("ctrl")
+        elif way == "top_menu":
+            menu.top(["File", "New note"])
+        else:
+            ValueError("Not supported")
+
+        # Editor should be focused automatically.
+        ActionChains(driver).send_keys(content)
+        title_input = self.editor.find_element_by_xpath("//input[@class='title-input']")
+        title_input.send_keys(title)
