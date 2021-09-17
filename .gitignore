@@ -1,0 +1,4 @@
+__pycache__
+--remote-debugging-port=0
+chromedriver
+*.AppImage
