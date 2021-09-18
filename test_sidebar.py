@@ -11,10 +11,10 @@ class Sidebar(base.Test):
 
         for way in ("button", "right_click", "top_menu"):
             with self.subTest(way=way):
-                notebook_count = len(self.get_notebooks())
+                notebook_count = len(self.api.get_notebooks())
                 self.add_notebook(way=way)
                 self.wait_for(
-                    lambda: len(self.get_notebooks()) == notebook_count + 1,
+                    lambda: len(self.api.get_notebooks()) == notebook_count + 1,
                     message=f"Adding notebook by {way} failed.",
                 )
 
@@ -22,14 +22,19 @@ class Sidebar(base.Test):
         # TODO: check for correct name
         # TODO: check for correct place (parent element)
 
+        notebooks = self.api.get_notebooks()
+        notebook_id = random.choice(notebooks)["id"]
+        notebook_element = self.driver.find_element_by_xpath(
+            f"//div[@data-folder-id='{notebook_id}']"
+        )
+        notebook_element.click()
+
         for way in ("right_click", "top_menu"):
             with self.subTest(way=way):
-                notebooks = self.get_notebooks()
-                parent_notebook = random.choice(notebooks)
-
-                self.add_notebook(way=way, parent=parent_notebook)
+                notebook_count = len(self.api.get_notebooks())
+                self.add_notebook(way=way, parent=notebook_element)
                 self.wait_for(
-                    lambda: len(self.get_notebooks()) == len(notebooks) + 1,
+                    lambda: len(self.api.get_notebooks()) == notebook_count + 1,
                     message=f"Adding notebook by {way} failed.",
                 )
 
@@ -45,11 +50,7 @@ class Sidebar(base.Test):
 
         all_notes_button = self.notebooks_div.find_element_by_class_name("all-notes")
         all_notes_button.click()
-
-        note_counts = self.notebooks_div.find_elements_by_class_name("note-count-label")
-        total_note_count = sum([int(c.text) for c in note_counts])
-
-        self.assertEqual(len(self.get_notes()), total_note_count)
+        self.assertEqual(len(self.get_notes()), len(self.api.get_notes()))
 
     def test_tags(self):
         # TODO: extend

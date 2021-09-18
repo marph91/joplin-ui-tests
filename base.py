@@ -3,24 +3,26 @@
 import time
 import unittest
 
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-
-from driver import driver
-
 # Only import pyautogui now, because it uses the DISPLAY variable.
 # It is set when starting xvfb.
 # https://pynput.readthedocs.io/en/latest/limitations.html?highlight=display#linux
 # It is needed to navigate through the menus, since they seem to be system level,
 # which can't be handled by selenium.
+import pyautogui
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+from api import api
+from driver import driver
 import menu
 
 
 class Test(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.api = api
         cls.driver = driver
 
         # cache common elements that shouldn't change
@@ -109,8 +111,6 @@ class Test(unittest.TestCase):
         title: str = "test_title",
         content: str = "test_content",
     ):
-
-        import pyautogui
 
         if way == "button":
             add_note_button = self.notelist.find_element_by_class_name(

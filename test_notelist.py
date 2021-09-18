@@ -1,5 +1,7 @@
 """Tests for the notelist in the center."""
 
+import random
+
 import base
 
 
@@ -14,34 +16,36 @@ class Notelist(base.Test):
 
     def test_create_note(self):
 
-        # Check the notecount next to the selected notebook, because this works for small windows and many notes.
-        notebooks = self.get_notebooks()
-        selected_notebook = [
-            n for n in notebooks if "selected" in n.get_attribute("class")
-        ][0]
+        notebooks = self.api.get_notebooks()
+        notebook_id = random.choice(notebooks)["id"]
+        notebook_element = self.driver.find_element_by_xpath(
+            f"//div[@data-folder-id='{notebook_id}']"
+        )
+        notebook_element.click()
 
         for way in ("button", "hotkey", "top_menu"):
             with self.subTest(way=way):
-                note_count = self.get_note_count(selected_notebook)
+                note_count = len(self.api.get_notes(notebook_id))
                 self.add_note(way=way)
                 self.wait_for(
-                    lambda: self.get_note_count(selected_notebook) == note_count + 1,
+                    lambda: len(self.api.get_notes(notebook_id)) == note_count + 1,
                     message=f"Adding note by {way} failed.",
                 )
 
     def test_create_todo(self):
 
-        # Check the notecount next to the selected notebook, because this works for small windows and many notes.
-        notebooks = self.get_notebooks()
-        selected_notebook = [
-            n for n in notebooks if "selected" in n.get_attribute("class")
-        ][0]
+        notebooks = self.api.get_notebooks()
+        notebook_id = random.choice(notebooks)["id"]
+        notebook_element = self.driver.find_element_by_xpath(
+            f"//div[@data-folder-id='{notebook_id}']"
+        )
+        notebook_element.click()
 
         for way in ("button", "hotkey", "top_menu"):
             with self.subTest(way=way):
-                note_count = self.get_note_count(selected_notebook)
+                note_count = len(self.api.get_notes(notebook_id))
                 self.add_todo(way=way)
                 self.wait_for(
-                    lambda: self.get_note_count(selected_notebook) == note_count + 1,
+                    lambda: len(self.api.get_notes(notebook_id)) == note_count + 1,
                     message=f"Adding todo by {way} failed.",
                 )
