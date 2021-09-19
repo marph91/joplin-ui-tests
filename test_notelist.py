@@ -1,7 +1,6 @@
 """Tests for the notelist in the center."""
 
 import itertools
-import random
 
 from parameterized import parameterized
 
@@ -14,12 +13,7 @@ class Notelist(base.Test):
     )
     def test_create(self, type_, way):
 
-        notebooks = self.api.get_notebooks()
-        notebook_id = random.choice(notebooks)["id"]
-        notebook_element = self.driver.find_element_by_xpath(
-            f"//div[@data-folder-id='{notebook_id}']"
-        )
-        notebook_element.click()
+        _, notebook_id = self.select_random_notebook()
 
         note_count = len(self.api.get_notes(notebook_id))
         self.add_note(way=way, todo=type_ == "todo")

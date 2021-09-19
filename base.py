@@ -1,5 +1,6 @@
 """Module for providing a test base."""
 
+import random
 import time
 import unittest
 
@@ -140,3 +141,12 @@ class Test(unittest.TestCase):
         ActionChains(driver).send_keys(content)
         title_input = self.editor.find_element_by_xpath("//input[@class='title-input']")
         title_input.send_keys(title)
+
+    def select_random_notebook(self):
+        notebooks = self.api.get_notebooks()
+        notebook_id = random.choice(notebooks)["id"]
+        notebook_element = self.driver.find_element_by_xpath(
+            f"//div[@data-folder-id='{notebook_id}']"
+        )
+        notebook_element.click()
+        return notebook_element, notebook_id

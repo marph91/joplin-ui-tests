@@ -1,8 +1,5 @@
 """Tests for the sidebar on the left."""
 
-import random
-import time
-
 from parameterized import parameterized
 from selenium.common.exceptions import NoSuchElementException
 
@@ -26,12 +23,7 @@ class Sidebar(base.Test):
         # TODO: check for correct name
         # TODO: check for correct place (parent element)
 
-        notebooks = self.api.get_notebooks()
-        notebook_id = random.choice(notebooks)["id"]
-        notebook_element = self.driver.find_element_by_xpath(
-            f"//div[@data-folder-id='{notebook_id}']"
-        )
-        notebook_element.click()
+        notebook_element, _ = self.select_random_notebook()
 
         notebook_count = len(self.api.get_notebooks())
         self.add_notebook(way=way, parent=notebook_element)

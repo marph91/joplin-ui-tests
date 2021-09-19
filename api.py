@@ -1,12 +1,12 @@
 """Utilities to interact with the API."""
 
-from driver import driver
-import menu
-
 import requests
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
+from driver import driver
+import menu
 
 
 class Api:
@@ -50,8 +50,7 @@ WebDriverWait(driver, 10).until(
 menu.top(["Tools", "Options"])
 web_clipper_tab = driver.find_element_by_xpath("//a/span[text()='Web Clipper']")
 web_clipper_tab.click()
-token = driver.find_element_by_xpath("//span[string-length(text())=128]")
-api = Api(token.text)
+api = Api(driver.find_element_by_xpath("//span[string-length(text())=128]").text)
 
 # avoid any language specific locators
 buttons = driver.find_elements_by_tag_name("button")
