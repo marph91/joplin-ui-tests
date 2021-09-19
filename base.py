@@ -110,49 +110,21 @@ class Test(unittest.TestCase):
         way: str = "button",
         title: str = "test_title",
         content: str = "test_content",
+        todo: bool = False,
     ):
 
         if way == "button":
             add_note_button = self.notelist.find_element_by_class_name(
-                "new-note-button"
+                "new-todo-button" if todo else "new-note-button"
             )
             add_note_button.click()
         elif way == "hotkey":
             # ActionChains doesn't work.
             pyautogui.keyDown("ctrl")
-            pyautogui.press("n")
+            pyautogui.press("t" if todo else "n")
             pyautogui.keyUp("ctrl")
         elif way == "top_menu":
-            menu.top(["File", "New note"])
-        else:
-            ValueError("Not supported")
-
-        # Editor should be focused automatically.
-        ActionChains(driver).send_keys(content)
-        title_input = self.editor.find_element_by_xpath("//input[@class='title-input']")
-        title_input.send_keys(title)
-
-    def add_todo(
-        self,
-        way: str = "button",
-        title: str = "test_title",
-        content: str = "test_content",
-    ):
-
-        import pyautogui
-
-        if way == "button":
-            add_todo_button = self.notelist.find_element_by_class_name(
-                "new-todo-button"
-            )
-            add_todo_button.click()
-        elif way == "hotkey":
-            # ActionChains doesn't work.
-            pyautogui.keyDown("ctrl")
-            pyautogui.press("t")
-            pyautogui.keyUp("ctrl")
-        elif way == "top_menu":
-            menu.top(["File", "New to-do"])
+            menu.top(["File", "New to-do" if todo else "New note"])
         else:
             ValueError("Not supported")
 
