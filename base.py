@@ -90,7 +90,7 @@ class Test(unittest.TestCase):
                     "//div[@data-folder-id]"
                 )
 
-                # first and only option of dropdown
+                # first option of dropdown
                 # TODO: Find a way to abstract all menus.
                 ActionChains(self.driver).context_click(notebook_title).perform()
                 menu.choose_entry(1)
@@ -113,6 +113,19 @@ class Test(unittest.TestCase):
         add_notebook_buttons = add_notebook_dialog.find_elements_by_tag_name("button")
 
         [b for b in add_notebook_buttons if b.text == "OK"][0].click()
+
+    def delete_notebook(self, element):
+        # Notebooks are only deletable by right click.
+
+        # second option of dropdown
+        # TODO: Find a way to abstract all menus.
+        ActionChains(self.driver).context_click(element).perform()
+        menu.choose_entry(2)
+
+        # left button to confirm
+        # TODO: Selectable via webdriver?
+        # TODO: Why are two clicks necessary?
+        menu.choose_entry(2, key="left")
 
     def add_note(
         self,

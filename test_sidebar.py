@@ -32,6 +32,20 @@ class Sidebar(base.Test):
             message=f"Adding notebook by {way} failed.",
         )
 
+    def test_delete_notebook(self):
+        # TODO: check if correct notebook got deleted
+
+        # Create a dummy notebook to keep the count constant.
+        self.api.add_notebook()
+
+        notebook_element, _ = self.select_random_notebook()
+        notebook_count = len(self.api.get_notebooks())
+        self.delete_notebook(notebook_element)
+        self.wait_for(
+            lambda: len(self.api.get_notebooks()) == notebook_count - 1,
+            message=f"Deleting notebook failed.",
+        )
+
     def test_note_count_label(self):
         # Add empty notebook to have at least two notebooks.
         # One with notes and one without notes.
