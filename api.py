@@ -33,9 +33,9 @@ class Api:
         return response.json()["items"]
 
 
-# wait until the driver has loaded
+# Wait until a note has loaded, since notes load slowest.
 WebDriverWait(driver, 10).until(
-    EC.presence_of_element_located((By.CLASS_NAME, "rli-sideBar"))
+    EC.presence_of_element_located((By.CLASS_NAME, "note-list-item"))
 )
 
 # activate the api if not already done

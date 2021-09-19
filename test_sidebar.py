@@ -14,9 +14,6 @@ class Sidebar(base.Test):
         # TODO: check for correct name
 
         notebook_count = len(self.api.get_notebooks())
-        if way == "top_menu":
-            # TODO: Without the sleep, the test fails. Fix it.
-            time.sleep(0.5)
         self.add_notebook(way=way)
         self.wait_for(
             lambda: len(self.api.get_notebooks()) == notebook_count + 1,

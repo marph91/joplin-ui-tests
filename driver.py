@@ -5,6 +5,7 @@ even when used in multiple modules.
 
 import io
 import os
+import shutil
 import stat
 import zipfile
 
@@ -37,6 +38,8 @@ download_chromedriver()
 chromedriver_service = webdriver.chrome.service.Service("./chromedriver")
 chromedriver_service.start()
 
+# delete previous profile and start with a fresh one
+shutil.rmtree("--remote-debugging-port=0", ignore_errors=True)
 
 # https://www.selenium.dev/selenium/docs/api/py/webdriver_remote/selenium.webdriver.remote.webdriver.html#module-selenium.webdriver.remote.webdriver
 driver = webdriver.remote.webdriver.WebDriver(
