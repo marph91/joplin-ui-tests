@@ -15,7 +15,7 @@ class Api:
         self.token = token
 
     def create_url(self, path: str, query: dict) -> str:
-        query["token"] = self.token   # TODO: extending the dict may have side effects
+        query["token"] = self.token  # TODO: extending the dict may have side effects
         query_str = "&".join([f"{key}={val}" for key, val in query.items()])
         return f"{self.url}{path}?{query_str}"
 
@@ -78,5 +78,9 @@ try:
     api.ping()
 except requests.exceptions.ConnectionError:
     buttons[0].click()  # activate button
-api.get_notes()
+try:
+    api.get_notes()
+except requests.exceptions.ConnectionError:
+    # try a second time
+    api.get_notes()
 buttons[-1].click()  # back button
