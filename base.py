@@ -1,8 +1,12 @@
 """Module for providing a test base."""
 
+from datetime import datetime
+import os
 import random
 import time
 import unittest
+
+from PIL import ImageGrab
 
 # Only import pyautogui now, because it uses the DISPLAY variable.
 # It is set when starting xvfb.
@@ -23,6 +27,8 @@ import menu
 class Test(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        os.makedirs("debug", exist_ok=True)
+
         cls.api = api
         cls.driver = driver
 
@@ -39,6 +45,18 @@ class Test(unittest.TestCase):
 
         cls.notelist = cls.driver.find_element_by_class_name("rli-noteList")
         cls.editor = cls.driver.find_element_by_class_name("rli-editor")
+
+    def tearDown(self):
+        super().setUp()
+
+        for _, error in self._outcome.errors:
+            if error:
+                datestr = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+                self.driver.get_screenshot_as_file(
+                    f"debug/{datestr}_{self.id()}_webdriver.png"
+                )
+                screenshot = ImageGrab.grab()
+                screenshot.save(f"debug/{datestr}_{self.id()}_xvfb.png", "PNG")
 
     @staticmethod
     def wait_for(

@@ -37,7 +37,7 @@ def main():
     # See https://github.com/SeleniumHQ/selenium/issues/6878.
     warnings.simplefilter("ignore", ResourceWarning)
 
-    with optional(not args.no_xvfb, Xvfb()):
+    with optional(not args.no_xvfb, Xvfb(width=1920, height=1080)):
         # The driver should be started in the xvfb context.
         import driver  # pylint: disable=import-outside-toplevel
 

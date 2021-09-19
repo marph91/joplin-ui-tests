@@ -43,7 +43,7 @@ class Sidebar(base.Test):
         self.delete_notebook(notebook_element)
         self.wait_for(
             lambda: len(self.api.get_notebooks()) == notebook_count - 1,
-            message="Deleting notebook failed.",
+            message="Deleting notebook by right click failed.",
         )
 
     @parameterized.expand(("hotkey", "right_click"))
