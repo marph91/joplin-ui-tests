@@ -14,30 +14,38 @@ class Api:
         self.url = "http://localhost:41184"
         self.token = token
 
-    def ping(self):
-        response = requests.get(f"{self.url}/ping")
+    def create_url(self, path: str, query: dict) -> str:
+        query["token"] = self.token   # TODO: extending the dict may have side effects
+        query_str = "&".join([f"{key}={val}" for key, val in query.items()])
+        return f"{self.url}{path}?{query_str}"
+
+    def get(self, path: str, query: dict = {}):
+        response = requests.get(self.create_url(path, query))
         response.raise_for_status()
         return response
+
+    def post(self, path: str, query: dict = {}, data: dict = {}):
+        response = requests.post(self.create_url(path, query), json=data)
+        response.raise_for_status()
+        return response
+
+    def ping(self):
+        return self.get("/ping")
 
     def get_notebooks(self, parent_id=None):
         # TODO: Parent doesn't seem to be supported.
         parent = "" if parent_id is None else f"/folders/{parent_id}"
-        response = requests.get(f"{self.url}{parent}/folders?token={self.token}")
-        response.raise_for_status()
-        return response.json()["items"]
+        return self.get(f"{parent}/folders").json()["items"]
 
     def get_notes(self, parent_id=None):
         parent = "" if parent_id is None else f"/folders/{parent_id}"
-        response = requests.get(f"{self.url}{parent}/notes?token={self.token}")
-        response.raise_for_status()
-        return response.json()["items"]
+        return self.get(f"{parent}/notes").json()["items"]
 
     def add_notebook(self, name: str = "test", parent_id=None):
         data = {"title": name}
         if parent_id:
             data["parent_id"] = parent_id
-        response = requests.post(f"{self.url}/folders?token={self.token}", json=data)
-        response.raise_for_status()
+        self.post("/folders", data=data)
 
     def add_note(
         self,
@@ -49,8 +57,7 @@ class Api:
         data = {"title": name, "body": content, "is_todo": int(todo)}
         if parent_id:
             data["parent_id"] = parent_id
-        response = requests.post(f"{self.url}/notes?token={self.token}", json=data)
-        response.raise_for_status()
+        self.post("/notes", data=data)
 
 
 # Wait until a note has loaded, since notes load slowest.
