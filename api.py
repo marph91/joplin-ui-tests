@@ -51,5 +51,5 @@ try:
     api.ping()
 except requests.exceptions.ConnectionError:
     buttons[0].click()  # activate button
-api.ping()
+api.get_notes()
 buttons[-1].click()  # back button
