@@ -1,24 +1,30 @@
 """Tests for the sidebar on the left."""
 
 import random
+import time
+
+from parameterized import parameterized
 
 import base
 
 
 class Sidebar(base.Test):
-    def test_create_notebook(self):
+    @parameterized.expand(("button", "right_click", "top_menu"))
+    def test_create_notebook(self, way):
         # TODO: check for correct name
 
-        for way in ("button", "right_click", "top_menu"):
-            with self.subTest(way=way):
-                notebook_count = len(self.api.get_notebooks())
-                self.add_notebook(way=way)
-                self.wait_for(
-                    lambda: len(self.api.get_notebooks()) == notebook_count + 1,
-                    message=f"Adding notebook by {way} failed.",
-                )
+        notebook_count = len(self.api.get_notebooks())
+        if way == "top_menu":
+            # TODO: Without the sleep, the test fails. Fix it.
+            time.sleep(0.5)
+        self.add_notebook(way=way)
+        self.wait_for(
+            lambda: len(self.api.get_notebooks()) == notebook_count + 1,
+            message=f"Adding notebook by {way} failed.",
+        )
 
-    def test_create_sub_notebook(self):
+    @parameterized.expand(("right_click", "top_menu"))
+    def test_create_sub_notebook(self, way):
         # TODO: check for correct name
         # TODO: check for correct place (parent element)
 
@@ -29,14 +35,12 @@ class Sidebar(base.Test):
         )
         notebook_element.click()
 
-        for way in ("right_click", "top_menu"):
-            with self.subTest(way=way):
-                notebook_count = len(self.api.get_notebooks())
-                self.add_notebook(way=way, parent=notebook_element)
-                self.wait_for(
-                    lambda: len(self.api.get_notebooks()) == notebook_count + 1,
-                    message=f"Adding notebook by {way} failed.",
-                )
+        notebook_count = len(self.api.get_notebooks())
+        self.add_notebook(way=way, parent=notebook_element)
+        self.wait_for(
+            lambda: len(self.api.get_notebooks()) == notebook_count + 1,
+            message=f"Adding notebook by {way} failed.",
+        )
 
     def test_notebook_collapsing(self):
         self.assertTrue(self.notebooks_div.is_displayed())

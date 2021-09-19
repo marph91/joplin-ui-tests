@@ -2,6 +2,8 @@
 
 import random
 
+from parameterized import parameterized
+
 import base
 
 
@@ -14,7 +16,8 @@ class Notelist(base.Test):
             return int(label[0].text)
         raise ValueError(f"Found too many labels ({len(label)}).")
 
-    def test_create_note(self):
+    @parameterized.expand(("button", "hotkey", "top_menu"))
+    def test_create_note(self, way):
 
         notebooks = self.api.get_notebooks()
         notebook_id = random.choice(notebooks)["id"]
@@ -23,16 +26,15 @@ class Notelist(base.Test):
         )
         notebook_element.click()
 
-        for way in ("button", "hotkey", "top_menu"):
-            with self.subTest(way=way):
-                note_count = len(self.api.get_notes(notebook_id))
-                self.add_note(way=way)
-                self.wait_for(
-                    lambda: len(self.api.get_notes(notebook_id)) == note_count + 1,
-                    message=f"Adding note by {way} failed.",
-                )
+        note_count = len(self.api.get_notes(notebook_id))
+        self.add_note(way=way)
+        self.wait_for(
+            lambda: len(self.api.get_notes(notebook_id)) == note_count + 1,
+            message=f"Adding note by {way} failed.",
+        )
 
-    def test_create_todo(self):
+    @parameterized.expand(("button", "hotkey", "top_menu"))
+    def test_create_todo(self, way):
 
         notebooks = self.api.get_notebooks()
         notebook_id = random.choice(notebooks)["id"]
@@ -41,11 +43,9 @@ class Notelist(base.Test):
         )
         notebook_element.click()
 
-        for way in ("button", "hotkey", "top_menu"):
-            with self.subTest(way=way):
-                note_count = len(self.api.get_notes(notebook_id))
-                self.add_todo(way=way)
-                self.wait_for(
-                    lambda: len(self.api.get_notes(notebook_id)) == note_count + 1,
-                    message=f"Adding todo by {way} failed.",
-                )
+        note_count = len(self.api.get_notes(notebook_id))
+        self.add_todo(way=way)
+        self.wait_for(
+            lambda: len(self.api.get_notes(notebook_id)) == note_count + 1,
+            message=f"Adding todo by {way} failed.",
+        )
