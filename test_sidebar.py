@@ -43,7 +43,22 @@ class Sidebar(base.Test):
         self.delete_notebook(notebook_element)
         self.wait_for(
             lambda: len(self.api.get_notebooks()) == notebook_count - 1,
-            message=f"Deleting notebook failed.",
+            message="Deleting notebook failed.",
+        )
+
+    @parameterized.expand(("hotkey", "right_click"))
+    def test_delete_note(self, way):
+        # TODO: check if correct note got deleted
+
+        # Create a dummy note to keep the count constant.
+        self.api.add_note()
+
+        note_element, _ = self.select_random_note()
+        note_count = len(self.api.get_notes())
+        self.delete_note(note_element, way=way)
+        self.wait_for(
+            lambda: len(self.api.get_notes()) == note_count - 1,
+            message=f"Deleting note by {way} failed.",
         )
 
     def test_note_count_label(self):

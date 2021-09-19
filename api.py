@@ -39,6 +39,19 @@ class Api:
         response = requests.post(f"{self.url}/folders?token={self.token}", json=data)
         response.raise_for_status()
 
+    def add_note(
+        self,
+        name: str = "test",
+        content: str = "test_content",
+        parent_id=None,
+        todo: bool = False,
+    ):
+        data = {"title": name, "body": content, "is_todo": int(todo)}
+        if parent_id:
+            data["parent_id"] = parent_id
+        response = requests.post(f"{self.url}/notes?token={self.token}", json=data)
+        response.raise_for_status()
+
 
 # Wait until a note has loaded, since notes load slowest.
 # TODO: This only works when a notebook with notes is selected.

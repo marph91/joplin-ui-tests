@@ -155,6 +155,22 @@ class Test(unittest.TestCase):
         title_input = self.editor.find_element_by_xpath("//input[@class='title-input']")
         title_input.send_keys(title)
 
+    def delete_note(self, element, way: str = "hotkey"):
+
+        if way == "hotkey":
+            element.click()
+            pyautogui.press("delete")
+        elif way == "right_click":
+            ActionChains(self.driver).context_click(element).perform()
+            menu.choose_entry(8)
+        else:
+            ValueError("Not supported")
+
+        # left button to confirm
+        # TODO: Selectable via webdriver?
+        # TODO: Why are two clicks necessary?
+        menu.choose_entry(2, key="left")
+
     def select_random_notebook(self):
         notebooks = self.api.get_notebooks()
         notebook_id = random.choice(notebooks)["id"]
@@ -163,3 +179,19 @@ class Test(unittest.TestCase):
         )
         notebook_element.click()
         return notebook_element, notebook_id
+
+    def select_random_note(self):
+        notes = self.api.get_notes()
+        note = random.choice(notes)
+
+        # click containing folder to show note
+        notebook_element = self.driver.find_element_by_xpath(
+            f"//div[@data-folder-id='{note['parent_id']}']"
+        )
+        notebook_element.click()
+
+        note_element = self.driver.find_element_by_xpath(
+            f"//a[@data-id='{note['id']}']"
+        )
+        note_element.click()
+        return note_element, note["id"]
