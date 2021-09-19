@@ -47,8 +47,6 @@ class Sidebar(base.Test):
         self.assertTrue(self.notebooks_div.is_displayed())
 
     def test_show_all_notes(self):
-        # TODO: Doesn't work for many notes or small window.
-
         all_notes_button = self.notebooks_div.find_element_by_class_name("all-notes")
         all_notes_button.click()
         self.assertEqual(len(self.get_notes()), len(self.api.get_notes()))

@@ -34,6 +34,7 @@ class Api:
 
 
 # Wait until a note has loaded, since notes load slowest.
+# TODO: This only works when a notebook with notes is selected.
 WebDriverWait(driver, 10).until(
     EC.presence_of_element_located((By.CLASS_NAME, "note-list-item"))
 )
