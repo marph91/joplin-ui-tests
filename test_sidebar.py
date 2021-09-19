@@ -4,6 +4,7 @@ import random
 import time
 
 from parameterized import parameterized
+from selenium.common.exceptions import NoSuchElementException
 
 import base
 
@@ -38,6 +39,21 @@ class Sidebar(base.Test):
             lambda: len(self.api.get_notebooks()) == notebook_count + 1,
             message=f"Adding notebook by {way} failed.",
         )
+
+    def test_note_count_label(self):
+        # Add empty notebook to have at least two notebooks.
+        # One with notes and one without notes.
+        self.api.add_notebook()
+        notebooks = self.get_notebooks()
+        for notebook in notebooks:
+            expected = len(self.api.get_notes(notebook.get_attribute("data-folder-id")))
+            try:
+                actual = int(
+                    notebook.find_element_by_class_name("note-count-label").text
+                )
+            except NoSuchElementException:
+                actual = 0
+            self.assertEqual(actual, expected)
 
     def test_notebook_collapsing(self):
         self.assertTrue(self.notebooks_div.is_displayed())
