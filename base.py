@@ -30,6 +30,7 @@ def run_again_at_failure(func):
     Simply run the test again in case of a failure.
     Useful to check if the failure is persistent.
     """
+
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
         try:
@@ -41,7 +42,24 @@ def run_again_at_failure(func):
     return wrapper
 
 
+class IdGenerator:
+    """Generates contiguous integer IDs when called."""
+
+    def __init__(self):
+        self.id_int = 0
+
+    def __call__(self) -> str:
+        return_id = str(self.id_int).zfill(32)  # has to be 32 characters
+        self.id_int += 1
+        return return_id
+
+
 class Test(unittest.TestCase):
+    def __init__(self, methodName):
+        super().__init__(methodName=methodName)
+
+        self.new_id = IdGenerator()
+
     @classmethod
     def setUpClass(cls):
         os.makedirs("debug", exist_ok=True)
@@ -62,6 +80,7 @@ class Test(unittest.TestCase):
 
         cls.notelist = cls.driver.find_element_by_class_name("rli-noteList")
         cls.editor = cls.driver.find_element_by_class_name("rli-editor")
+        cls.editor_toolbar = cls.editor.find_element_by_class_name("editor-toolbar")
 
     def tearDown(self):
         super().tearDown()

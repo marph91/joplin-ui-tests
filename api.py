@@ -1,5 +1,7 @@
 """Utilities to interact with the API."""
 
+from typing import Optional
+
 import requests
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -55,12 +57,15 @@ class Api:
         self,
         name: str = "test",
         content: str = "test_content",
-        parent_id=None,
+        id_: Optional[str] = None,
+        parent_id: Optional[str] = None,
         todo: bool = False,
     ):
         data = {"title": name, "body": content, "is_todo": int(todo)}
-        if parent_id:
+        if parent_id is not None:
             data["parent_id"] = parent_id
+        if id_ is not None:
+            data["id"] = id_
         self.post("/notes", data=data)
 
 
