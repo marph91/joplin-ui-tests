@@ -13,7 +13,7 @@ import requests
 from selenium import webdriver
 
 
-def download_chromedriver(destination: str = "./chromedriver"):
+def download_chromedriver(destination: str = "./bin/chromedriver"):
     """
     Electron app uses chrome 85.0.4183.121. Download the corresponding chromedriver.
     How to obtain the correct chromedriver version for an electron app:
@@ -27,15 +27,31 @@ def download_chromedriver(destination: str = "./chromedriver"):
         response = requests.get(
             "https://chromedriver.storage.googleapis.com/85.0.4183.87/chromedriver_linux64.zip"  # pylint: disable=line-too-long
         )
+        response.raise_for_status()
         with zipfile.ZipFile(io.BytesIO(response.content)) as chromedriver_zip:
             chromedriver_zip.extract("chromedriver", path=".")
     if not os.access(destination, os.X_OK):
         # readd the executable flag
         os.chmod(destination, os.stat(destination).st_mode | stat.S_IEXEC)
+    return destination
 
 
-download_chromedriver()
-chromedriver_service = webdriver.chrome.service.Service("./chromedriver")
+def download_joplin(destination: str = "./bin/joplin.AppImage"):
+    if not os.path.exists(destination):
+        # TODO: How to download the latest release?
+        response = requests.get(
+            "https://github.com/laurent22/joplin/releases/download/v2.4.7/Joplin-2.4.7.AppImage"  # pylint: disable=line-too-long
+        )
+        response.raise_for_status()
+        with open(destination, "wb") as outfile:
+            outfile.write(response.content)
+    if not os.access(destination, os.X_OK):
+        # readd the executable flag
+        os.chmod(destination, os.stat(destination).st_mode | stat.S_IEXEC)
+    return destination
+
+
+chromedriver_service = webdriver.chrome.service.Service(download_chromedriver())
 chromedriver_service.start()
 
 # delete previous profile and start with a fresh one
@@ -46,7 +62,7 @@ driver = webdriver.remote.webdriver.WebDriver(
     command_executor=chromedriver_service.service_url,
     desired_capabilities={
         "goog:chromeOptions": {
-            "binary": "./Joplin-2.4.4.AppImage",
+            "binary": download_joplin(),
             # TODO: How to forward a correct profile to the app through webdriver?
             # https://stackoverflow.com/q/69180856/7410886
             "args": ["profile"],
