@@ -21,11 +21,15 @@ class Api:
 
     def get(self, path: str, query: dict = {}):
         response = requests.get(self.create_url(path, query))
+        if response.status_code != 200:
+            print(response.json)
         response.raise_for_status()
         return response
 
     def post(self, path: str, query: dict = {}, data: dict = {}):
         response = requests.post(self.create_url(path, query), json=data)
+        if response.status_code != 200:
+            print(response.json)
         response.raise_for_status()
         return response
 
