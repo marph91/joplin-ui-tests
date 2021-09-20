@@ -1,6 +1,7 @@
 """Module for providing a test base."""
 
 from datetime import datetime
+import functools
 import os
 import random
 import time
@@ -22,6 +23,22 @@ from selenium.webdriver.support.ui import WebDriverWait
 from api import api
 from driver import driver
 import menu
+
+
+def run_again_at_failure(func):
+    """
+    Simply run the test again in case of a failure.
+    Useful to check if the failure is persistent.
+    """
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        try:
+            func(self, *args, **kwargs)
+        except:
+            print(f"{func.__name__}: first run failed!")
+            func(self, *args, **kwargs)
+
+    return wrapper
 
 
 class Test(unittest.TestCase):
@@ -47,7 +64,7 @@ class Test(unittest.TestCase):
         cls.editor = cls.driver.find_element_by_class_name("rli-editor")
 
     def tearDown(self):
-        super().setUp()
+        super().tearDown()
 
         for _, error in self._outcome.errors:
             if error:
@@ -121,11 +138,13 @@ class Test(unittest.TestCase):
                 menu.top(["File", "New notebook"])
             else:
                 parent.click()
+                self.wait_for(lambda: "selected" in parent.get_attribute("class"))
                 menu.top(["File", "New sub-notebook"])
         else:
             ValueError("Not supported")
 
-        add_notebook_dialog = self.driver.find_element_by_class_name("modal-dialog")
+        add_notebook_dialog = self.driver.find_element_by_class_name("modal-layer")
+        self.wait_for(add_notebook_dialog.is_displayed)
         notebook_title_input = add_notebook_dialog.find_element_by_tag_name("input")
         notebook_title_input.send_keys(name)
         add_notebook_buttons = add_notebook_dialog.find_elements_by_tag_name("button")
