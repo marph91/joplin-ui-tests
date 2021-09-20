@@ -83,7 +83,8 @@ class Sidebar(base.Test):
                 lambda: len(
                     self.api.get_notes(notebook.get_attribute("data-folder-id"))
                 )
-                == get_note_count_by_label(notebook)
+                == get_note_count_by_label(notebook),
+                timeout=3,
             )
 
     def test_notebook_collapsing(self):
