@@ -2,11 +2,66 @@
 
 from parameterized import parameterized
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
 
 import base
+import menu
 
 
 class Sidebar(base.Test):
+    def add_notebook(self, name: str = "test", way: str = "button", parent=None):
+
+        if way == "button":
+            add_notebook_button = self.sidebar.find_element_by_xpath(
+                "//div[@data-folder-id]/following-sibling::button"
+            )
+            add_notebook_button.click()
+        elif way == "right_click":
+            if parent is None:
+                # right click on the notebooks title at top
+                notebook_title = self.driver.find_element_by_xpath(
+                    "//div[@data-folder-id]"
+                )
+
+                # first option of dropdown
+                # TODO: Find a way to abstract all menus.
+                ActionChains(self.driver).context_click(notebook_title).perform()
+                menu.choose_entry(1)
+            else:
+                # right click on the specified parent notebook
+                ActionChains(self.driver).context_click(parent).perform()
+                menu.choose_entry(1)  # first option of dropdown
+        elif way == "top_menu":
+            if parent is None:
+                menu.top(["File", "New notebook"])
+            else:
+                parent.click()
+                self.wait_for(lambda: "selected" in parent.get_attribute("class"))
+                menu.top(["File", "New sub-notebook"])
+        else:
+            ValueError("Not supported")
+
+        add_notebook_dialog = self.driver.find_element_by_class_name("modal-layer")
+        self.wait_for(add_notebook_dialog.is_displayed)
+        notebook_title_input = add_notebook_dialog.find_element_by_tag_name("input")
+        notebook_title_input.send_keys(name)
+        add_notebook_buttons = add_notebook_dialog.find_elements_by_tag_name("button")
+
+        [b for b in add_notebook_buttons if b.text == "OK"][0].click()
+
+    def delete_notebook(self, element):
+        # Notebooks are only deletable by right click.
+
+        # second option of dropdown
+        # TODO: Find a way to abstract all menus.
+        ActionChains(self.driver).context_click(element).perform()
+        menu.choose_entry(2)
+
+        # left button to confirm
+        # TODO: Selectable via webdriver?
+        # TODO: Why are two clicks necessary?
+        menu.choose_entry(2, key="left")
+
     @parameterized.expand(("button", "right_click", "top_menu"))
     def test_create_notebook(self, way):
         # TODO: check for correct name
