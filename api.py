@@ -16,19 +16,23 @@ class Api:
         self.url = "http://localhost:41184"
         self.token = token
 
-    def create_url(self, path: str, query: dict) -> str:
+    def create_url(self, path: str, query: Optional[dict]) -> str:
+        if query is None:
+            query = {}
         query["token"] = self.token  # TODO: extending the dict may have side effects
         query_str = "&".join([f"{key}={val}" for key, val in query.items()])
         return f"{self.url}{path}?{query_str}"
 
-    def get(self, path: str, query: dict = {}):
+    def get(self, path: str, query: Optional[dict] = None):
         response = requests.get(self.create_url(path, query))
         if response.status_code != 200:
             print(response.json)
         response.raise_for_status()
         return response
 
-    def post(self, path: str, query: dict = {}, data: dict = {}):
+    def post(
+        self, path: str, query: Optional[dict] = None, data: Optional[dict] = None
+    ):
         response = requests.post(self.create_url(path, query), json=data)
         if response.status_code != 200:
             print(response.json)

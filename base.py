@@ -35,7 +35,7 @@ def run_again_at_failure(func):
     def wrapper(self, *args, **kwargs):
         try:
             func(self, *args, **kwargs)
-        except:
+        except:  # pylint: disable=bare-except
             print(f"{func.__name__}: first run failed!")
             func(self, *args, **kwargs)
 
