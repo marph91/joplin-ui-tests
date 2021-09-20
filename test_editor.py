@@ -2,7 +2,11 @@
 
 from datetime import datetime
 
+from parameterized import parameterized
+import pyautogui
+
 import base
+import menu
 
 
 class Header(base.Test):
@@ -38,3 +42,44 @@ class Header(base.Test):
                 "//div[@class='note-property-box']/../..//button"
             )
             button.click()
+
+
+class Editor(base.Test):
+    def toggle_layout(self, way="button"):
+
+        if way == "button":
+            toolbar_buttons = self.editor_toolbar.find_elements_by_class_name("button")
+            toggle_layout_button = toolbar_buttons[2]
+            toggle_layout_button.click()
+        elif way == "hotkey":
+            pyautogui.keyDown("ctrl")
+            pyautogui.press("l")
+            pyautogui.keyUp("ctrl")
+        elif way == "top_menu":
+            menu.top(["View", "Toggle editor layout"])
+        else:
+            ValueError("Not supported")
+
+    @parameterized.expand(("button", "hotkey", "top_menu"))
+    def test_toggle_layout(self, way):
+        editor = self.editor.find_element_by_xpath(
+            "//div[@class='codeMirrorEditor']/.."
+        )
+        viewer = self.editor.find_element_by_xpath(
+            "//iframe[@class='noteTextViewer']/.."
+        )
+
+        def viewer_is_displayed():
+            return not "max-width: 1px" in viewer.get_attribute("style")
+
+        self.assertTrue(editor.is_displayed())
+        self.assertTrue(viewer_is_displayed())
+        self.toggle_layout(way=way)
+        self.assertTrue(editor.is_displayed())
+        self.assertFalse(viewer_is_displayed())
+        self.toggle_layout(way=way)
+        self.assertFalse(editor.is_displayed())
+        self.assertTrue(viewer_is_displayed())
+        self.toggle_layout(way=way)
+        self.assertTrue(editor.is_displayed())
+        self.assertTrue(viewer_is_displayed())

@@ -86,6 +86,7 @@ TOP_MENU_LAYOUT = (
             Entry("Change application layout"),
             Entry("Toggle sidebar"),
             Entry("Toggle note list"),
+            Entry("Toggle editor layout"),
             Entry(
                 "Layout button sequence",
                 (
