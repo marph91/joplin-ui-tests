@@ -51,6 +51,9 @@ class Api:
         parent = "" if parent_id is None else f"/folders/{parent_id}"
         return self.get(f"{parent}/notes").json()["items"]
 
+    def get_tags(self):
+        return self.get("/tags").json()["items"]
+
     def add_notebook(self, name: str = "test", parent_id=None):
         data = {"title": name}
         if parent_id:
