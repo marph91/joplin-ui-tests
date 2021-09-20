@@ -82,11 +82,19 @@ class Test(unittest.TestCase):
         cls.editor = cls.driver.find_element_by_class_name("rli-editor")
         cls.editor_toolbar = cls.editor.find_element_by_class_name("editor-toolbar")
 
+    def setUp(self):
+        super().setUp()
+        self.start_time = time.time()
+
     def tearDown(self):
         super().tearDown()
 
+        # add the duration to each test
+        print(f"{time.time() - self.start_time:.3f} s, ", end="", flush=True)
+
         for _, error in self._outcome.errors:
-            if error:
+            # TODO: Check only once for error?
+            if error is not None:
                 datestr = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
                 self.driver.get_screenshot_as_file(
                     f"debug/{datestr}_{self.id()}_webdriver.png"
