@@ -9,6 +9,16 @@ import menu
 
 
 class Sidebar(base.Test):
+    def fill_modal_dialog(self, input_: str):
+        """Fill out and confirm a modal dialog with one input."""
+        dialog = self.driver.find_element_by_class_name("modal-layer")
+        self.wait_for(dialog.is_displayed)
+        input_element = dialog.find_element_by_tag_name("input")
+        input_element.clear()
+        input_element.send_keys(input_)
+        buttons = dialog.find_elements_by_tag_name("button")
+        [b for b in buttons if b.text == "OK"][0].click()
+
     def add_notebook(self, name: str = "test", way: str = "button", parent=None):
 
         if way == "button":
@@ -41,13 +51,7 @@ class Sidebar(base.Test):
         else:
             ValueError("Not supported")
 
-        add_notebook_dialog = self.driver.find_element_by_class_name("modal-layer")
-        self.wait_for(add_notebook_dialog.is_displayed)
-        notebook_title_input = add_notebook_dialog.find_element_by_tag_name("input")
-        notebook_title_input.send_keys(name)
-        add_notebook_buttons = add_notebook_dialog.find_elements_by_tag_name("button")
-
-        [b for b in add_notebook_buttons if b.text == "OK"][0].click()
+        self.fill_modal_dialog(name)
 
     def delete_notebook(self, element):
         # Notebooks are only deletable by right click.
@@ -101,6 +105,22 @@ class Sidebar(base.Test):
             lambda: len(self.api.get_notebooks()) == notebook_count - 1,
             message="Deleting notebook by right click failed.",
         )
+
+    def test_rename_notebook(self):
+        self.skipTest("TODO: Only works as a single test.")
+        # Notebooks are only renamable by right click.
+        new_name = "abc"
+        notebook_element, notebook_id = self.select_random_notebook()
+
+        # rename notebook via UI
+        ActionChains(self.driver).context_click(notebook_element).perform()
+        menu.choose_entry(3)
+        self.fill_modal_dialog(new_name)
+
+        # check against API reference
+        notebooks = self.api.get_notebooks()
+        renamed_notebook = [notebook for notebook in notebooks if notebook["id"] == notebook_id][0]
+        self.assertEqual(renamed_notebook["title"], new_name)
 
     # TODO: Why does it only work in this order and as single tests?
     @parameterized.expand(("right_click", "hotkey"))
