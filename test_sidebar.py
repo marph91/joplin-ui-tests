@@ -96,7 +96,7 @@ class Sidebar(base.Test):
         )
 
     def test_delete_notebook(self):
-        self.skipTest("TODO: Only works as a single test.")
+        self.skipTest("TODO: Running this test causes multiple tests to fail.")
         # TODO: check if correct notebook got deleted
 
         # Create a dummy notebook to keep the count constant.
@@ -111,7 +111,6 @@ class Sidebar(base.Test):
         )
 
     def test_rename_notebook(self):
-        self.skipTest("TODO: Only works as a single test.")
         # Notebooks are only renamable by right click.
         new_name = "abc"
         notebook_element, notebook_id = self.select_random_notebook()
