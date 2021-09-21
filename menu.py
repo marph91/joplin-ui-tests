@@ -175,11 +175,10 @@ TOP_MENU_LAYOUT = (
 )
 
 
-def choose_entry(position: int, key="down"):
+def choose_entry(position: int, key="down", confirm="enter"):
     """Select an entry from an arbitrary menu."""
-    for _ in range(position):
-        pyautogui.press(key)
-    pyautogui.press("enter")
+    pyautogui.press(key, presses=position)
+    pyautogui.press(confirm)
 
 
 def top(path: List[str]):
