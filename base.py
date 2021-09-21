@@ -17,6 +17,7 @@ from PIL import ImageGrab
 import pyautogui
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -177,3 +178,15 @@ class Test(unittest.TestCase):
         )
         note_element.click()
         return note_element, note["id"]
+
+    def fill_modal_dialog(self, input_: str, tag: bool = False):
+        """Fill out and confirm a modal dialog with one input."""
+        dialog = self.driver.find_element_by_class_name("modal-layer")
+        self.wait_for(dialog.is_displayed)
+        input_element = dialog.find_element_by_tag_name("input")
+        input_element.clear()
+        input_element.send_keys(input_)
+        if tag:
+            input_element.send_keys(Keys.ENTER)
+        buttons = dialog.find_elements_by_tag_name("button")
+        [b for b in buttons if b.text == "OK"][0].click()

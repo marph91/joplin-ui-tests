@@ -4,25 +4,20 @@ from parameterized import parameterized
 import pyautogui
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 
 import base
 import menu
 
 
 class Sidebar(base.Test):
-    def fill_modal_dialog(self, input_: str, tag: bool = False):
-        """Fill out and confirm a modal dialog with one input."""
-        dialog = self.driver.find_element_by_class_name("modal-layer")
-        self.wait_for(dialog.is_displayed)
-        input_element = dialog.find_element_by_tag_name("input")
-        input_element.clear()
-        input_element.send_keys(input_)
-        if tag:
-            input_element.send_keys(Keys.ENTER)
-        buttons = dialog.find_elements_by_tag_name("button")
-        [b for b in buttons if b.text == "OK"][0].click()
+    def test_synchronise_button(self):
+        # TODO: extend
+        self.sidebar.find_element_by_xpath(
+            "//button/span[contains(@class, 'icon-sync')]"
+        )
 
+
+class Notebook(base.Test):
     def add_notebook(self, name: str = "test", way: str = "button", parent=None):
 
         if way == "button":
@@ -163,6 +158,26 @@ class Sidebar(base.Test):
         all_notes_button.click()
         self.assertEqual(len(self.get_notes()), len(self.api.get_notes()))
 
+    def test_drag_notebooks(self):
+        self.skipTest("Drag and drop doesn't seem to work yet.")
+        # https://github.com/webdriverio/webdriverio/issues/4134
+        # ActionChains(self.driver).drag_and_drop(
+        #    self.get_notebooks()[0], self.get_notebooks()[1]
+        # ).perform()
+
+    def test_export_notebook(self):
+        self.skipTest("Download dialog doesn't work yet.")
+        for _ in ("JEX", "RAW", "MD", "HTML (File)", "HTML (Directory)"):
+            pass
+
+
+class Tag(base.Test):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # Ensure a note is selected. Add all the tags to this note.
+        cls.note, _ = cls.select_random_note(cls)
+
     def add_tag(self, name: str = "test", way: str = "bottom_bar"):
         if way == "bottom_bar":
             bottom_bar = self.editor.find_element_by_xpath("//div[@class='tag-bar']/a")
@@ -174,8 +189,7 @@ class Sidebar(base.Test):
             pyautogui.keyUp("alt")
             pyautogui.keyUp("ctrl")
         elif way == "right_click":
-            note_element, _ = self.select_random_note()
-            ActionChains(self.driver).context_click(note_element).perform()
+            ActionChains(self.driver).context_click(self.note).perform()
             menu.choose_entry(1)
         elif way == "top_menu":
             menu.top(["Note", "Tags"])
@@ -186,28 +200,9 @@ class Sidebar(base.Test):
 
     @parameterized.expand(("bottom_bar", "hotkey", "right_click", "top_menu"))
     def test_add_tag(self, way):
-        # self.sidebar.find_element_by_xpath("//div/i[contains(@class, 'icon-tags')]")
         tag_count = len(self.api.get_tags())
         self.add_tag(name=way, way=way)
         self.wait_for(
             lambda: len(self.api.get_tags()) == tag_count + 1,
             message=f"Adding tag by {way} failed.",
         )
-
-    def test_drag_notebooks(self):
-        self.skipTest("Drag and drop doesn't seem to work yet.")
-        # https://github.com/webdriverio/webdriverio/issues/4134
-        # ActionChains(self.driver).drag_and_drop(
-        #    self.get_notebooks()[0], self.get_notebooks()[1]
-        # ).perform()
-
-    def test_synchronise_button(self):
-        # TODO: extend
-        self.sidebar.find_element_by_xpath(
-            "//button/span[contains(@class, 'icon-sync')]"
-        )
-
-    def test_export_notebook(self):
-        self.skipTest("Download dialog doesn't work yet.")
-        for _ in ("JEX", "RAW", "MD", "HTML (File)", "HTML (Directory)"):
-            pass
