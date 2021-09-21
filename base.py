@@ -80,7 +80,6 @@ class Test(unittest.TestCase):
 
         cls.notelist = cls.driver.find_element_by_class_name("rli-noteList")
         cls.editor = cls.driver.find_element_by_class_name("rli-editor")
-        cls.editor_toolbar = cls.editor.find_element_by_class_name("editor-toolbar")
 
     def setUp(self):
         super().setUp()

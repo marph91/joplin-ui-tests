@@ -20,11 +20,11 @@ class Header(base.Test):
         timelabel = self.editor.find_element_by_class_name("updated-time-label")
         self.assertEqual(timelabel.text, current_time_formatted)
 
+        # avoid language specific locators
+        editor_toolbar = self.editor.find_element_by_class_name("editor-toolbar")
+        toolbar_buttons = editor_toolbar.find_elements_by_class_name("button")
+        toolbar_buttons[-1].click()  # note properties
         try:
-            # avoid language specific locators
-            toolbar_buttons = self.editor_toolbar.find_elements_by_class_name("button")
-            toolbar_buttons[-1].click()  # note properties
-
             note_properties = self.editor.find_elements_by_xpath(
                 "//div[@class='note-property-box']/*[2]"
             )
@@ -48,7 +48,8 @@ class Editor(base.Test):
     def toggle_layout(self, way="button"):
 
         if way == "button":
-            toolbar_buttons = self.editor_toolbar.find_elements_by_class_name("button")
+            editor_toolbar = self.editor.find_element_by_class_name("editor-toolbar")
+            toolbar_buttons = editor_toolbar.find_elements_by_class_name("button")
             toggle_layout_button = toolbar_buttons[2]
             toggle_layout_button.click()
         elif way == "hotkey":
