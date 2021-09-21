@@ -43,7 +43,7 @@ def run_again_at_failure(func):
     return wrapper
 
 
-class IdGenerator:
+class IdGenerator:  # pylint: disable=too-few-public-methods
     """Generates contiguous integer IDs when called."""
 
     def __init__(self):
