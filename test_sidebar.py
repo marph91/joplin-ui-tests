@@ -183,11 +183,7 @@ class Tag(base.Test):
             bottom_bar = self.editor.find_element_by_xpath("//div[@class='tag-bar']/a")
             bottom_bar.click()
         elif way == "hotkey":
-            pyautogui.keyDown("ctrl")
-            pyautogui.keyDown("alt")
-            pyautogui.press("t")
-            pyautogui.keyUp("alt")
-            pyautogui.keyUp("ctrl")
+            pyautogui.hotkey("ctrl", "alt", "t")
         elif way == "right_click":
             ActionChains(self.driver).context_click(self.note).perform()
             menu.choose_entry(1)

@@ -26,9 +26,7 @@ class Note(base.Test):
             add_note_button.click()
         elif way == "hotkey":
             # ActionChains doesn't work.
-            pyautogui.keyDown("ctrl")
-            pyautogui.press("t" if todo else "n")
-            pyautogui.keyUp("ctrl")
+            pyautogui.hotkey("ctrl", "t" if todo else "n")
         elif way == "top_menu":
             menu.top(["File", "New to-do" if todo else "New note"])
         else:

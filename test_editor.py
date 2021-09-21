@@ -53,9 +53,7 @@ class Editor(base.Test):
             toggle_layout_button = toolbar_buttons[2]
             toggle_layout_button.click()
         elif way == "hotkey":
-            pyautogui.keyDown("ctrl")
-            pyautogui.press("l")
-            pyautogui.keyUp("ctrl")
+            pyautogui.hotkey("ctrl", "l")
         elif way == "top_menu":
             menu.top(["View", "Toggle editor layout"])
         else:
