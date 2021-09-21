@@ -128,22 +128,6 @@ class Sidebar(base.Test):
         ][0]
         self.assertEqual(renamed_notebook["title"], new_name)
 
-    # TODO: Why does it only work in this order and as single tests?
-    @parameterized.expand(("right_click", "hotkey"))
-    def test_delete_note(self, way):
-        # TODO: check if correct note got deleted
-
-        # Create a dummy note to keep the count constant.
-        self.api.add_note()
-
-        note_element, _ = self.select_random_note()
-        note_count = len(self.api.get_notes())
-        self.delete_note(note_element, way=way)
-        self.wait_for(
-            lambda: len(self.api.get_notes()) == note_count - 1,
-            message=f"Deleting note by {way} failed.",
-        )
-
     def test_note_count_label(self):
         def get_note_count_by_label(notebook) -> int:
             try:

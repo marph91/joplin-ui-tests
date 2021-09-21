@@ -10,7 +10,7 @@ import base
 import menu
 
 
-class Notelist(base.Test):
+class Note(base.Test):
     def add_note(
         self,
         way: str = "button",
@@ -51,4 +51,19 @@ class Notelist(base.Test):
         self.wait_for(
             lambda: len(self.api.get_notes(notebook_id)) == note_count + 1,
             message=f"Adding note by {way} failed.",
+        )
+
+    @parameterized.expand(("hotkey", "right_click"))
+    def test_delete_note(self, way):
+        # TODO: check if correct note got deleted
+
+        # Create a dummy note to keep the count constant.
+        self.api.add_note()
+
+        note_element, _ = self.select_random_note()
+        note_count = len(self.api.get_notes())
+        self.delete_note(note_element, way=way)
+        self.wait_for(
+            lambda: len(self.api.get_notes()) == note_count - 1,
+            message=f"Deleting note by {way} failed.",
         )
