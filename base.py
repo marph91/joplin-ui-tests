@@ -99,8 +99,7 @@ class Test(unittest.TestCase):
                 self.driver.get_screenshot_as_file(
                     f"debug/{datestr}_{self.id()}_webdriver.png"
                 )
-                screenshot = ImageGrab.grab()
-                screenshot.save(f"debug/{datestr}_{self.id()}_xvfb.png", "PNG")
+                ImageGrab.grab().save(f"debug/{datestr}_{self.id()}_xvfb.png", "PNG")
 
     @staticmethod
     def wait_for(
