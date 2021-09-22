@@ -49,19 +49,22 @@ class Api:
     def ping(self):
         return self.get("/ping")
 
-    def get_notebooks(self, parent_id=None):
+    def get_notebooks(self, parent_id: str = None):
         # TODO: Parent doesn't seem to be supported.
         parent = "" if parent_id is None else f"/folders/{parent_id}"
         return self.get(f"{parent}/folders").json()["items"]
 
-    def get_notes(self, parent_id=None):
+    def get_notes(self, parent_id: str = None, query=None):
         parent = "" if parent_id is None else f"/folders/{parent_id}"
-        return self.get(f"{parent}/notes").json()["items"]
+        return self.get(f"{parent}/notes", query=query).json()["items"]
 
     def get_tags(self):
         return self.get("/tags").json()["items"]
 
-    def add_notebook(self, name: str = "test", parent_id=None):
+    def get_note(self, id_: str = None, query=None):
+        return self.get(f"/notes/{id_}", query=query).json()
+
+    def add_notebook(self, name: str = "test", parent_id: str = None):
         data = {"title": name}
         if parent_id:
             data["parent_id"] = parent_id

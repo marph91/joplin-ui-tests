@@ -44,7 +44,7 @@ class Note(base.Test):
 
         _, notebook_id = self.select_random_notebook()
 
-        note_count = len(self.api.get_notes(notebook_id))
+        note_count = len(self.api.get_notes(parent_id=notebook_id))
         self.add_note(title=self._testMethodName, way=way, todo=type_ == "todo")
         self.wait_for(
             lambda: len(self.api.get_notes(notebook_id)) == note_count + 1,
@@ -63,3 +63,45 @@ class Note(base.Test):
             lambda: len(self.api.get_notes()) == note_count - 1,
             message=f"Deleting note by {way} failed.",
         )
+
+    def test_duplicate_note(self):
+        note_element, _ = self.select_random_note()
+        note_count = len(self.api.get_notes())
+
+        # duplicate by right click
+        ActionChains(self.driver).context_click(note_element).perform()
+        menu.choose_entry(3)
+
+        self.wait_for(
+            lambda: len(self.api.get_notes()) == note_count + 1,
+            message=f"Duplicating note by right click failed.",
+        )
+
+        notes = self.api.get_notes(query={"fields": "parent_id,title,body"})
+        duplicated_notes = [
+            note for note in notes if note["title"].startswith(note_element.text)
+        ]
+        self.assertEqual(len(duplicated_notes), 2)
+        self.assertEqual(
+            duplicated_notes[0]["parent_id"], duplicated_notes[1]["parent_id"]
+        )
+        self.assertEqual(duplicated_notes[0]["body"], duplicated_notes[1]["body"])
+
+    def test_switch_type(self):
+        note_element, note_id = self.select_random_note()
+
+        def switch_type():
+            # switch by right click
+            ActionChains(self.driver).context_click(note_element).perform()
+            menu.choose_entry(5)
+
+        def is_todo():
+            return bool(
+                self.api.get_note(id_=note_id, query={"fields": "is_todo"})["is_todo"]
+            )
+
+        initial = is_todo()
+        switch_type()
+        self.assertNotEqual(initial, is_todo())
+        switch_type()
+        self.assertEqual(initial, is_todo())
