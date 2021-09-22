@@ -92,10 +92,10 @@ class Api:
             if not notebook["parent_id"]:
                 self.delete_notebook(notebook["id"])
 
-# Wait until a note has loaded, since notes load slowest.
-# TODO: This only works when a notebook with notes is selected.
+
+# Wait until an element has loaded to continue.
 WebDriverWait(driver, 10).until(
-    EC.presence_of_element_located((By.CLASS_NAME, "note-list-item"))
+    EC.presence_of_element_located((By.CLASS_NAME, "rli-sideBar"))
 )
 
 # activate the api if not already done

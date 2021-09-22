@@ -66,7 +66,7 @@ class Notebook(base.Test):
         menu.choose_entry(2, key="left")
 
     @parameterized.expand(("button", "right_click", "top_menu"))
-    def test_create_notebook(self, way):
+    def test_add_notebook(self, way):
         # TODO: check for correct name
 
         notebook_count = len(self.api.get_notebooks())
@@ -77,7 +77,7 @@ class Notebook(base.Test):
         )
 
     @parameterized.expand(("right_click", "top_menu"))
-    def test_create_sub_notebook(self, way):
+    def test_add_sub_notebook(self, way):
         # TODO: check for correct name
         # TODO: check for correct place (parent element)
 
@@ -93,9 +93,6 @@ class Notebook(base.Test):
     def test_delete_notebook(self):
         self.skipTest("TODO: Running this test causes multiple tests to fail.")
         # TODO: check if correct notebook got deleted
-
-        # Create a dummy notebook to keep the count constant.
-        self.api.add_notebook()
 
         notebook_element, _ = self.select_random_notebook()
         notebook_count = len(self.api.get_notebooks())
@@ -123,18 +120,26 @@ class Notebook(base.Test):
         self.assertEqual(renamed_notebook["title"], new_name)
 
     def test_note_count_label(self):
+        self.skipTest("TODO: Resizing doesn't work. Is there a reliable way?")
+        # Resize the sidebar to make all labels visible.
+        sidebar_resize = self.sidebar.find_element_by_xpath(
+            "//div[contains(@style, 'col-resize')]"
+        )
+        ActionChains(self.driver).click_and_hold(sidebar_resize).move_by_offset(
+            100, 0
+        ).perform()
+
         def get_note_count_by_label(notebook) -> int:
             try:
-                actual = int(
-                    notebook.find_element_by_class_name("note-count-label").text
-                )
-            except NoSuchElementException:
+                note_label = notebook.find_element_by_class_name("note-count-label")
+                self.assertTrue(note_label.is_displayed())
+                actual = int(note_label.text)
+            except (NoSuchElementException, ValueError):
                 actual = 0
             return actual
 
-        # Add empty notebook to have at least two notebooks.
-        # One with notes and one without notes.
-        self.api.add_notebook()
+        # Add a note to have at least one notebook with content.
+        self.api.add_note(name=self._testMethodName)
         notebooks = self.get_notebooks()
         for notebook in notebooks:
             # Sometimes the note count needs time to update.
@@ -147,14 +152,17 @@ class Notebook(base.Test):
             )
 
     def test_notebook_collapsing(self):
-        self.assertTrue(self.notebooks_div.is_displayed())
+        notebooks_div = self.sidebar.find_element_by_xpath(
+            "//div[starts-with(@class, 'folders')]"
+        )
+        self.assertTrue(notebooks_div.is_displayed())
         self.notebooks_title.click()
-        self.assertFalse(self.notebooks_div.is_displayed())
+        self.assertFalse(notebooks_div.is_displayed())
         self.notebooks_title.click()
-        self.assertTrue(self.notebooks_div.is_displayed())
+        self.assertTrue(notebooks_div.is_displayed())
 
     def test_show_all_notes(self):
-        all_notes_button = self.notebooks_div.find_element_by_class_name("all-notes")
+        all_notes_button = self.sidebar.find_element_by_class_name("all-notes")
         all_notes_button.click()
         self.assertEqual(len(self.get_notes()), len(self.api.get_notes()))
 

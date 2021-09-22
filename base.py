@@ -68,6 +68,10 @@ class Test(unittest.TestCase):
         cls.api = api
         cls.driver = driver
 
+        # Each test class should have at least one notebook and one note.
+        cls.api.add_notebook(name=cls.__name__)
+        cls.api.add_note(name=cls.__name__)
+
         # cache common elements that shouldn't change
         cls.sidebar = WebDriverWait(cls.driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "rli-sideBar"))
@@ -75,12 +79,16 @@ class Test(unittest.TestCase):
         cls.notebooks_title = cls.sidebar.find_element_by_xpath(
             "//div[@data-folder-id]"
         )
-        cls.notebooks_div = cls.sidebar.find_element_by_xpath(
-            "//div[starts-with(@class, 'folders')]"
-        )
 
         cls.notelist = cls.driver.find_element_by_class_name("rli-noteList")
         cls.editor = cls.driver.find_element_by_class_name("rli-editor")
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+        # Clear all notes at the end of the test class.
+        cls.api.delete_all_notebooks()
 
     def setUp(self):
         super().setUp()
@@ -124,7 +132,7 @@ class Test(unittest.TestCase):
 
     def get_notebooks(self):
         # First match is the "All notes" button.
-        return self.notebooks_div.find_elements_by_class_name("list-item-container")[1:]
+        return self.sidebar.find_elements_by_class_name("list-item-container")[1:]
 
     def get_notes(self):
         # Finds notes and todos.
@@ -156,7 +164,7 @@ class Test(unittest.TestCase):
     def select_random_notebook(self):
         notebooks = self.api.get_notebooks()
         notebook_id = random.choice(notebooks)["id"]
-        notebook_element = self.driver.find_element_by_xpath(
+        notebook_element = self.sidebar.find_element_by_xpath(
             f"//div[@data-folder-id='{notebook_id}']"
         )
         notebook_element.click()
@@ -167,12 +175,12 @@ class Test(unittest.TestCase):
         note = random.choice(notes)
 
         # click containing folder to show note
-        notebook_element = self.driver.find_element_by_xpath(
+        notebook_element = self.sidebar.find_element_by_xpath(
             f"//div[@data-folder-id='{note['parent_id']}']"
         )
         notebook_element.click()
 
-        note_element = self.driver.find_element_by_xpath(
+        note_element = self.notelist.find_element_by_xpath(
             f"//a[@data-id='{note['id']}']"
         )
         note_element.click()
@@ -194,6 +202,8 @@ class Test(unittest.TestCase):
         dialog = self.driver.find_element_by_class_name("modal-layer")
         self.wait_for(dialog.is_displayed)
         input_element = dialog.find_element_by_tag_name("input")
+        # TODO: Sometimes clear() doesn't work. Maybe a workaround should be used.
+        # See: https://stackoverflow.com/a/50682169/7410886
         input_element.clear()
         input_element.send_keys(input_)
         if tag:

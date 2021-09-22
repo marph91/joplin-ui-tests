@@ -40,7 +40,7 @@ class Note(base.Test):
     @parameterized.expand(
         itertools.product(("note", "todo"), ("button", "hotkey", "top_menu"))
     )
-    def test_create(self, type_, way):
+    def test_add(self, type_, way):
 
         _, notebook_id = self.select_random_notebook()
 
@@ -55,9 +55,6 @@ class Note(base.Test):
     def test_delete_note(self, way):
         self.skipTest("TODO: Running this test causes multiple tests to fail.")
         # TODO: check if correct note got deleted
-
-        # Create a dummy note to keep the count constant.
-        self.api.add_note()
 
         note_element, _ = self.select_random_note()
         note_count = len(self.api.get_notes())

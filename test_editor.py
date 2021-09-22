@@ -10,10 +10,16 @@ import menu
 
 
 class Header(base.Test):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # Ensure the notebook is selected, in order to find the created note in the UI.
+        cls.select_random_note(cls)
+
     def test_note_properties(self):
         id_ = self.new_id()
-        self.api.add_note(id_=id_)
-        note_element = self.driver.find_element_by_xpath(f"//a[@data-id='{id_}']")
+        self.api.add_note(name=self._testMethodName, id_=id_)
+        note_element = self.editor.find_element_by_xpath(f"//a[@data-id='{id_}']")
         note_element.click()
 
         current_time_formatted = datetime.now().strftime("%d/%m/%Y %H:%M")
@@ -45,6 +51,12 @@ class Header(base.Test):
 
 
 class Editor(base.Test):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        # Ensure a note is selected, because only then the editor is visible.
+        cls.select_random_note(cls)
+
     def toggle_layout(self, way="button"):
 
         if way == "button":

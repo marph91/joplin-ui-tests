@@ -65,7 +65,7 @@ driver = webdriver.remote.webdriver.WebDriver(
             "binary": download_joplin(),
             # TODO: How to forward a correct profile to the app through webdriver?
             # https://stackoverflow.com/q/69180856/7410886
-            "args": ["profile"],
+            "args": ["--profile", "--no-welcome"],
             # needed to avoid "unknown flag" errors
             # https://stackoverflow.com/a/51350140/7410886
             # https://source.chromium.org/chromium/chromium/src/+/main:chrome/test/chromedriver/chrome_launcher.cc;l=188
