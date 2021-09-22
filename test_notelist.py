@@ -1,9 +1,11 @@
 """Tests for the notelist in the center."""
 
 import itertools
+import time
 
 from parameterized import parameterized
 import pyautogui
+import pyperclip
 from selenium.webdriver.common.action_chains import ActionChains
 
 import base
@@ -105,3 +107,36 @@ class Note(base.Test):
         self.assertNotEqual(initial, is_todo())
         switch_type()
         self.assertEqual(initial, is_todo())
+
+    def test_complete_todo(self):
+        self.select_random_notebook()
+        id_ = self.new_id()
+        self.api.add_note(self._testMethodName, id_=id_, todo=True)
+
+        todo_checkbox = self.notelist.find_element_by_xpath(
+            f"//a[@data-id='{id_}']/..//input"
+        )
+
+        def todo_completed():
+            return self.api.get_note(id_=id_, query={"fields": "todo_completed"})[
+                "todo_completed"
+            ]
+
+        self.assertEqual(todo_completed(), 0)
+        t_start = time.time() * 1000  # ms
+        todo_checkbox.click()
+        t_end = time.time() * 1000  # ms
+        t_completed_api = todo_completed()
+        self.assertGreaterEqual(t_completed_api, t_start)
+        self.assertLessEqual(t_completed_api, t_end)
+        todo_checkbox.click()
+        self.assertEqual(todo_completed(), 0)
+
+    def test_markdown_link(self):
+        note_element, note_id = self.select_random_note()
+
+        # get link by right click
+        ActionChains(self.driver).context_click(note_element).perform()
+        menu.choose_entry(6)
+
+        self.assertEqual(f"[{note_element.text}](:/{note_id})", pyperclip.paste())
