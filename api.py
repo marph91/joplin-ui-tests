@@ -16,7 +16,7 @@ class Api:
         self.url = "http://localhost:41184"
         self.token = token
 
-    def create_url(self, path: str, query: Optional[dict]) -> str:
+    def create_url(self, path: str, query: Optional[dict] = None) -> str:
         if query is None:
             query = {}
         query["token"] = self.token  # TODO: extending the dict may have side effects
@@ -26,7 +26,7 @@ class Api:
     def get(self, path: str, query: Optional[dict] = None):
         response = requests.get(self.create_url(path, query))
         if response.status_code != 200:
-            print(response.json)
+            print(response.json())
         response.raise_for_status()
         return response
 
@@ -35,7 +35,14 @@ class Api:
     ):
         response = requests.post(self.create_url(path, query), json=data)
         if response.status_code != 200:
-            print(response.json)
+            print(response.json())
+        response.raise_for_status()
+        return response
+
+    def delete(self, path: str):
+        response = requests.delete(self.create_url(path))
+        if response.status_code != 200:
+            print(response.json())
         response.raise_for_status()
         return response
 
@@ -75,6 +82,15 @@ class Api:
             data["id"] = id_
         self.post("/notes", data=data)
 
+    def delete_notebook(self, id_):
+        self.delete(f"/folders/{id_}")
+
+    def delete_all_notebooks(self):
+        notebooks = self.get_notebooks()
+        for notebook in notebooks:
+            # Deleting the root notebooks is sufficient.
+            if not notebook["parent_id"]:
+                self.delete_notebook(notebook["id"])
 
 # Wait until a note has loaded, since notes load slowest.
 # TODO: This only works when a notebook with notes is selected.
