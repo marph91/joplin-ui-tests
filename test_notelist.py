@@ -45,7 +45,7 @@ class Note(base.Test):
         _, notebook_id = self.select_random_notebook()
 
         note_count = len(self.api.get_notes(notebook_id))
-        self.add_note(way=way, todo=type_ == "todo")
+        self.add_note(title=self._testMethodName, way=way, todo=type_ == "todo")
         self.wait_for(
             lambda: len(self.api.get_notes(notebook_id)) == note_count + 1,
             message=f"Adding note by {way} failed.",

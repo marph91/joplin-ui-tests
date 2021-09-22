@@ -70,7 +70,7 @@ class Notebook(base.Test):
         # TODO: check for correct name
 
         notebook_count = len(self.api.get_notebooks())
-        self.add_notebook(way=way)
+        self.add_notebook(name=self._testMethodName, way=way)
         self.wait_for(
             lambda: len(self.api.get_notebooks()) == notebook_count + 1,
             message=f"Adding notebook by {way} failed.",
@@ -84,7 +84,7 @@ class Notebook(base.Test):
         notebook_element, _ = self.select_random_notebook()
 
         notebook_count = len(self.api.get_notebooks())
-        self.add_notebook(way=way, parent=notebook_element)
+        self.add_notebook(name=self._testMethodName, way=way, parent=notebook_element)
         self.wait_for(
             lambda: len(self.api.get_notebooks()) == notebook_count + 1,
             message=f"Adding notebook by {way} failed.",
@@ -107,7 +107,7 @@ class Notebook(base.Test):
 
     def test_rename_notebook(self):
         # Notebooks are only renamable by right click.
-        new_name = "abc"
+        new_name = self._testMethodName
         notebook_element, notebook_id = self.select_random_notebook()
 
         # rename notebook via UI
@@ -197,7 +197,7 @@ class Tag(base.Test):
     @parameterized.expand(("bottom_bar", "hotkey", "right_click", "top_menu"))
     def test_add_tag(self, way):
         tag_count = len(self.api.get_tags())
-        self.add_tag(name=way, way=way)
+        self.add_tag(name=self._testMethodName, way=way)
         self.wait_for(
             lambda: len(self.api.get_tags()) == tag_count + 1,
             message=f"Adding tag by {way} failed.",
