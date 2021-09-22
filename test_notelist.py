@@ -76,7 +76,7 @@ class Note(base.Test):
 
         self.wait_for(
             lambda: len(self.api.get_notes()) == note_count + 1,
-            message=f"Duplicating note by right click failed.",
+            message="Duplicating note by right click failed.",
         )
 
         notes = self.api.get_notes(query={"fields": "parent_id,title,body"})
