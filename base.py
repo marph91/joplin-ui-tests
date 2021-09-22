@@ -178,7 +178,18 @@ class Test(unittest.TestCase):
         note_element.click()
         return note_element, note["id"]
 
-    def fill_modal_dialog(self, input_: str, tag: bool = False):
+    def select_random_tag(self):
+        tags = self.api.get_tags()
+        tag_id = random.choice(tags)["id"]
+        tag_element = self.driver.find_element_by_xpath(
+            f"//div[@data-tag-id='{tag_id}']"
+        )
+        tag_element.click()
+        return tag_element, tag_id
+
+    def fill_modal_dialog(
+        self, input_: str, confirm_by_button: bool = False, tag: bool = False
+    ):
         """Fill out and confirm a modal dialog with one input."""
         dialog = self.driver.find_element_by_class_name("modal-layer")
         self.wait_for(dialog.is_displayed)
@@ -187,5 +198,9 @@ class Test(unittest.TestCase):
         input_element.send_keys(input_)
         if tag:
             input_element.send_keys(Keys.ENTER)
-        buttons = dialog.find_elements_by_tag_name("button")
-        [b for b in buttons if b.text == "OK"][0].click()
+        if confirm_by_button:
+            # Assume the first button is to confirm.
+            confirm_button = dialog.find_element_by_tag_name("button")
+            confirm_button.click()
+        else:
+            input_element.send_keys(Keys.ENTER)

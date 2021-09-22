@@ -202,3 +202,44 @@ class Tag(base.Test):
             lambda: len(self.api.get_tags()) == tag_count + 1,
             message=f"Adding tag by {way} failed.",
         )
+
+    def test_delete_tag(self):
+        self.skipTest("TODO: Running this test causes multiple tests to fail.")
+
+        tag_element, _ = self.select_random_tag()
+        tag_count = len(self.api.get_tags())
+
+        # delete by right click
+        ActionChains(self.driver).context_click(tag_element).perform()
+        menu.choose_entry(1)
+        menu.choose_entry(2, key="left")
+
+        self.wait_for(
+            lambda: len(self.api.get_tags()) == tag_count - 1,
+            message="Deleting tag by right click failed.",
+        )
+
+    def test_rename_tag(self):
+        new_name = self._testMethodName
+        tag_element, tag_id = self.select_random_tag()
+
+        # rename by right click
+        ActionChains(self.driver).context_click(tag_element).perform()
+        menu.choose_entry(2)
+        self.fill_modal_dialog(new_name)
+
+        # check against API reference
+        tags = self.api.get_tags()
+        renamed_tag = [tag for tag in tags if tag["id"] == tag_id][0]
+        self.assertEqual(renamed_tag["title"], new_name)
+
+    def test_tag_collapsing(self):
+        tag_title = self.sidebar.find_element_by_xpath(
+            "//div/i[contains(@class, 'icon-tags')]/.."
+        )
+        tag_div = self.sidebar.find_element_by_class_name("tags")
+        self.assertTrue(tag_div.is_displayed())
+        tag_title.click()
+        self.assertFalse(tag_div.is_displayed())
+        tag_title.click()
+        self.assertTrue(tag_div.is_displayed())
