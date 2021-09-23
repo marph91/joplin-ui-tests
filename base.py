@@ -6,6 +6,7 @@ import logging
 import os
 import random
 import time
+from typing import List, Optional
 import unittest
 
 from PIL import ImageGrab
@@ -183,8 +184,16 @@ class Test(unittest.TestCase):
         # TODO: Why are two clicks necessary?
         menu.choose_entry(2, key="left")
 
-    def select_random_notebook(self):
+    def select_random_notebook(self, exclude: Optional[List[str]] = None):
         notebooks = self.api.get_notebooks()
+        if exclude is not None:
+            # TODO: Could be problematic for multiple time nested notebook.
+            notebooks = [
+                notebook
+                for notebook in notebooks
+                if notebook["id"] not in exclude
+                and notebook["parent_id"] not in exclude
+            ]
         notebook_id = random.choice(notebooks)["id"]
         notebook_element = self.sidebar.find_element_by_xpath(
             f"//div[@data-folder-id='{notebook_id}']"
@@ -192,8 +201,10 @@ class Test(unittest.TestCase):
         notebook_element.click()
         return notebook_element, notebook_id
 
-    def select_random_note(self):
+    def select_random_note(self, exclude: Optional[List[str]] = None):
         notes = self.api.get_notes()
+        if exclude is not None:
+            notes = [note for note in notes if note["id"] not in exclude]
         note = random.choice(notes)
 
         # click containing folder to show note

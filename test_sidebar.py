@@ -110,7 +110,7 @@ class Notebook(base.Test):
         self.skipTest("TODO: Running this test causes multiple tests to fail.")
         # TODO: check if correct notebook got deleted
 
-        notebook_element, _ = self.select_random_notebook()
+        notebook_element, _ = self.select_random_notebook(exclude=[self.notebook_id])
         notebook_count = len(self.api.get_notebooks())
         self.delete_notebook(notebook_element)
         self.wait_for(

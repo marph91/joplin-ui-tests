@@ -73,7 +73,7 @@ class Note(base.Test):
         self.skipTest("TODO: Running this test causes multiple tests to fail.")
         # TODO: check if correct note got deleted
 
-        note_element, _ = self.select_random_note()
+        note_element, _, _, _ = self.select_random_note(exclude=[self.note_id])
         note_count = len(self.api.get_notes())
         self.delete_note(note_element, way=way)
         self.wait_for(
