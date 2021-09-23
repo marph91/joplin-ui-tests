@@ -2,6 +2,7 @@
 
 from datetime import datetime
 import functools
+import logging
 import os
 import random
 import time
@@ -92,6 +93,7 @@ class Test(unittest.TestCase):
 
     def setUp(self):
         super().setUp()
+        logging.debug(f"Starting test {self.id()}")
         self.start_time = time.time()
 
     def tearDown(self):
@@ -141,10 +143,12 @@ class Test(unittest.TestCase):
         )
 
     def get_notebooks(self):
+        logging.debug("UI: get notebooks")
         # First match is the "All notes" button.
         return self.sidebar.find_elements_by_class_name("list-item-container")[1:]
 
     def get_notes(self):
+        logging.debug("UI: get notes")
         # Finds notes and todos.
         return self.notelist.find_elements_by_xpath(
             "//div[contains(@class, '-list-item')]/a"
@@ -156,6 +160,7 @@ class Test(unittest.TestCase):
         )
 
     def delete_note(self, element, way: str = "hotkey"):
+        logging.debug(f"UI: delete note {way=}")
 
         if way == "hotkey":
             element.click()

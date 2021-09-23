@@ -2,6 +2,7 @@
 
 import argparse
 import contextlib
+import logging
 import os
 import subprocess
 import time
@@ -34,6 +35,8 @@ class Recording(contextlib.ContextDecorator):
         self.recording_process = None
 
     def __enter__(self):
+        logging.debug("Start recording")
+
         # check whether ffmpeg is available
         subprocess.run(
             ["ffmpeg", "--help"],
@@ -66,7 +69,27 @@ class Recording(contextlib.ContextDecorator):
         return False  # don't suppress exceptions
 
 
-def main():
+def configure_logging():
+    # Don't spam the log. See: https://stackoverflow.com/a/11029841/7410886
+    logging.getLogger("selenium.webdriver.remote.remote_connection").setLevel(
+        logging.WARNING
+    )
+    logging.getLogger("requests").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+
+    logging.basicConfig(
+        filename="debug/test.log",
+        filemode="w",
+        format="%(asctime)s [%(levelname)s]: %(message)s",
+        level=logging.DEBUG,
+    )
+
+    # Suppress RessourceWarning in selenium.
+    # See https://github.com/SeleniumHQ/selenium/issues/6878.
+    warnings.simplefilter("ignore", ResourceWarning)
+
+
+def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--no-xvfb", action="store_true", help="Don't run the tests inside xvfb."
@@ -79,11 +102,11 @@ def main():
     )
     parser.add_argument("--testname", help="Run a subset of tests.")
     args = parser.parse_args()
+    logging.debug(f"CLI arguments: {args}")
+    return args
 
-    # Suppress RessourceWarning in selenium.
-    # See https://github.com/SeleniumHQ/selenium/issues/6878.
-    warnings.simplefilter("ignore", ResourceWarning)
 
+def run_tests(args):
     with optional(not args.no_xvfb, Xvfb(width=1920, height=1080)), optional(
         not args.no_recording, Recording()
     ):
@@ -101,6 +124,12 @@ def main():
         finally:
             driver.driver.quit()
             driver.chromedriver_service.stop()
+
+
+def main():
+    configure_logging()
+    args = parse_arguments()
+    run_tests(args)
 
 
 if __name__ == "__main__":

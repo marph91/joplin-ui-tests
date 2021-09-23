@@ -1,6 +1,7 @@
 """Tests for the notelist in the center."""
 
 import itertools
+import logging
 import time
 
 from parameterized import parameterized
@@ -21,6 +22,7 @@ class Note(base.Test):
         content: str = "test_content",
         todo: bool = False,
     ):
+        logging.debug(f"UI: add note {title=}")
 
         if way == "button":
             add_note_button = self.notelist.find_element_by_class_name(

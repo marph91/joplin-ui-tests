@@ -1,6 +1,7 @@
 """Helper functions for accessing menus of the joplin app."""
 
 import dataclasses
+import logging
 from typing import List, Sequence
 
 import pyautogui
@@ -185,6 +186,8 @@ def top(path: List[str]):
     """Select an entry from the top menu."""
     # TODO: path gets modified, which can cause side effects
     # TODO: handle non selectable entries
+
+    logging.debug(f"Selecting {path} from top menu.")
 
     pyautogui.press("alt")  # focus the menu
 

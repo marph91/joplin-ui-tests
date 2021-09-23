@@ -1,5 +1,7 @@
 """Tests for the sidebar on the left."""
 
+import logging
+
 from parameterized import parameterized
 import pyautogui
 from selenium.common.exceptions import NoSuchElementException
@@ -19,6 +21,7 @@ class Sidebar(base.Test):
 
 class Notebook(base.Test):
     def add_notebook(self, name: str = "test", way: str = "button", parent=None):
+        logging.debug(f"UI: add notebook {name=}, {way=}")
 
         if way == "button":
             add_notebook_button = self.sidebar.find_element_by_xpath(
@@ -53,6 +56,7 @@ class Notebook(base.Test):
         self.fill_modal_dialog(name)
 
     def delete_notebook(self, element):
+        logging.debug(f"UI: delete notebook")
         # Notebooks are only deletable by right click.
 
         # second option of dropdown
@@ -189,6 +193,8 @@ class Tag(base.Test):
             self.__class__.note, _ = self.select_random_note()
 
     def add_tag(self, name: str = "test", way: str = "bottom_bar"):
+        logging.debug(f"UI: add tag {name=}, {way=}")
+
         if way == "bottom_bar":
             bottom_bar = self.editor.find_element_by_xpath("//div[@class='tag-bar']/a")
             bottom_bar.click()

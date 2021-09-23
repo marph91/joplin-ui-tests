@@ -1,5 +1,6 @@
 """Utilities to interact with the API."""
 
+import logging
 import time
 from typing import Optional
 
@@ -25,6 +26,7 @@ class Api:
         return f"{self.url}{path}?{query_str}"
 
     def get(self, path: str, query: Optional[dict] = None):
+        logging.debug(f"API: get request: {path=}, {query=}")
         response = requests.get(self.create_url(path, query))
         if response.status_code != 200:
             print(response.json())
@@ -34,6 +36,7 @@ class Api:
     def post(
         self, path: str, query: Optional[dict] = None, data: Optional[dict] = None
     ):
+        logging.debug(f"API: post request: {path=}, {query=}, {data=}")
         response = requests.post(self.create_url(path, query), json=data)
         if response.status_code != 200:
             print(response.json())
@@ -41,6 +44,7 @@ class Api:
         return response
 
     def delete(self, path: str):
+        logging.debug(f"API: delete request: {path=}")
         response = requests.delete(self.create_url(path))
         if response.status_code != 200:
             print(response.json())
@@ -116,13 +120,15 @@ except requests.exceptions.ConnectionError:
     buttons[0].click()  # activate button
 
 # try three times until the API is available
-for _ in range(3):
+for i in range(3):
     try:
+        logging.debug(f"API: ping, try {i + 1}")
         api.ping()
         break
     except requests.exceptions.ConnectionError:
         # try another time
         time.sleep(0.1)
 api.ping()
+logging.debug("API: ping successful")
 
 buttons[-1].click()  # back button
