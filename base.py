@@ -132,6 +132,7 @@ class Test(unittest.TestCase):
 
     def find_element_present(self, by_, locator, timeout: int = 1):
         """Find an element and wait until it's present."""
+        # https://stackoverflow.com/a/59130336/7410886
         return WebDriverWait(self.driver, timeout).until(
             EC.presence_of_element_located((by_, locator))
         )
@@ -139,7 +140,13 @@ class Test(unittest.TestCase):
     def find_element_visible(self, by_, locator, timeout: int = 1):
         """Find an element and wait until it's visible."""
         return WebDriverWait(self.driver, timeout).until(
-            EC.presence_of_element_located((by_, locator))
+            EC.visibility_of_element_located((by_, locator))
+        )
+
+    def find_element_clickable(self, by_, locator, timeout: int = 1):
+        """Find an element and wait until it's visible."""
+        return WebDriverWait(self.driver, timeout).until(
+            EC.element_to_be_clickable((by_, locator))
         )
 
     def get_notebooks(self):
