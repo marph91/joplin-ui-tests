@@ -180,11 +180,13 @@ class Notebook(base.Test):
 
 
 class Tag(base.Test):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    note = None
+
+    def setUp(self):
+        super().setUp()
         # Ensure a note is selected. Add all the tags to this note.
-        cls.note, _ = cls.select_random_note(cls)
+        if self.__class__.note is None:
+            self.__class__.note, _ = self.select_random_note()
 
     def add_tag(self, name: str = "test", way: str = "bottom_bar"):
         if way == "bottom_bar":

@@ -73,7 +73,7 @@ class Test(unittest.TestCase):
         cls.api.add_note(name=cls.__name__)
 
         # cache common elements that shouldn't change
-        cls.sidebar = cls.find_element_wait(
+        cls.sidebar = cls.find_element_present(
             cls, By.CLASS_NAME, "rli-sideBar", timeout=10
         )
         cls.notebooks_title = cls.sidebar.find_element_by_xpath(
@@ -130,7 +130,14 @@ class Test(unittest.TestCase):
             time.sleep(interval)
         raise TimeoutError(message)
 
-    def find_element_wait(self, by_, locator, timeout: int = 1):
+    def find_element_present(self, by_, locator, timeout: int = 1):
+        """Find an element and wait until it's present."""
+        return WebDriverWait(self.driver, timeout).until(
+            EC.presence_of_element_located((by_, locator))
+        )
+
+    def find_element_visible(self, by_, locator, timeout: int = 1):
+        """Find an element and wait until it's visible."""
         return WebDriverWait(self.driver, timeout).until(
             EC.presence_of_element_located((by_, locator))
         )
@@ -180,13 +187,13 @@ class Test(unittest.TestCase):
         note = random.choice(notes)
 
         # click containing folder to show note
-        notebook_element = self.sidebar.find_element_by_xpath(
-            f"//div[@data-folder-id='{note['parent_id']}']"
+        notebook_element = self.find_element_present(
+            By.XPATH, f"//div[@data-folder-id='{note['parent_id']}']"
         )
         notebook_element.click()
 
-        note_element = self.notelist.find_element_by_xpath(
-            f"//a[@data-id='{note['id']}']"
+        note_element = self.find_element_present(
+            By.XPATH, f"//a[@data-id='{note['id']}']"
         )
         note_element.click()
         return note_element, note["id"]
@@ -204,8 +211,7 @@ class Test(unittest.TestCase):
         self, input_: str, confirm_by_button: bool = False, tag: bool = False
     ):
         """Fill out and confirm a modal dialog with one input."""
-        dialog = self.driver.find_element_by_class_name("modal-layer")
-        self.wait_for(dialog.is_displayed)
+        dialog = self.find_element_visible(By.CLASS_NAME, "modal-layer", timeout=5)
         input_element = dialog.find_element_by_tag_name("input")
         # Sometimes clear() and other workarounds don't work.
         # Use backspace instead. It takes longer, but works reliably.

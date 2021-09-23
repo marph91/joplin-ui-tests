@@ -113,7 +113,7 @@ class Note(base.Test):
         self.select_random_notebook()
         id_ = self.new_id()
         self.api.add_note(self._testMethodName, id_=id_, todo=True)
-        todo_checkbox = self.find_element_wait(
+        todo_checkbox = self.find_element_present(
             By.XPATH, f"//a[@data-id='{id_}']/..//input"
         )
 

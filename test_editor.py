@@ -11,16 +11,18 @@ import menu
 
 
 class Header(base.Test):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    notebook = None
+
+    def setUp(self):
+        super().setUp()
         # Ensure the notebook is selected, in order to find the created note in the UI.
-        cls.select_random_note(cls)
+        if self.__class__.notebook is None:
+            self.__class__.notebook, _ = self.select_random_notebook()
 
     def test_note_properties(self):
         id_ = self.new_id()
         self.api.add_note(name=self._testMethodName, id_=id_)
-        note_element = self.find_element_wait(By.XPATH, f"//a[@data-id='{id_}']")
+        note_element = self.find_element_present(By.XPATH, f"//a[@data-id='{id_}']")
         note_element.click()
 
         # Also consider one minute in the past, since there is a little time difference.
@@ -56,11 +58,13 @@ class Header(base.Test):
 
 
 class Editor(base.Test):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    note = None
+
+    def setUp(self):
+        super().setUp()
         # Ensure a note is selected, because only then the editor is visible.
-        cls.select_random_note(cls)
+        if self.__class__.note is None:
+            self.__class__.note, _ = self.select_random_note()
 
     def toggle_layout(self, way="button"):
 
