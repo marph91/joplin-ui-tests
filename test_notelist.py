@@ -7,6 +7,7 @@ from parameterized import parameterized
 import pyautogui
 import pyperclip
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
 
 import base
 import menu
@@ -112,9 +113,8 @@ class Note(base.Test):
         self.select_random_notebook()
         id_ = self.new_id()
         self.api.add_note(self._testMethodName, id_=id_, todo=True)
-
-        todo_checkbox = self.notelist.find_element_by_xpath(
-            f"//a[@data-id='{id_}']/..//input"
+        todo_checkbox = self.find_element_wait(
+            By.XPATH, f"//a[@data-id='{id_}']/..//input"
         )
 
         def todo_completed():

@@ -73,8 +73,8 @@ class Test(unittest.TestCase):
         cls.api.add_note(name=cls.__name__)
 
         # cache common elements that shouldn't change
-        cls.sidebar = WebDriverWait(cls.driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "rli-sideBar"))
+        cls.sidebar = cls.find_element_wait(
+            cls, By.CLASS_NAME, "rli-sideBar", timeout=10
         )
         cls.notebooks_title = cls.sidebar.find_element_by_xpath(
             "//div[@data-folder-id]"
@@ -129,6 +129,11 @@ class Test(unittest.TestCase):
                 return
             time.sleep(interval)
         raise TimeoutError(message)
+
+    def find_element_wait(self, by_, locator, timeout: int = 1):
+        return WebDriverWait(self.driver, timeout).until(
+            EC.presence_of_element_located((by_, locator))
+        )
 
     def get_notebooks(self):
         # First match is the "All notes" button.

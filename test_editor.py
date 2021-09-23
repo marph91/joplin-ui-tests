@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from parameterized import parameterized
 import pyautogui
+from selenium.webdriver.common.by import By
 
 import base
 import menu
@@ -19,7 +20,7 @@ class Header(base.Test):
     def test_note_properties(self):
         id_ = self.new_id()
         self.api.add_note(name=self._testMethodName, id_=id_)
-        note_element = self.editor.find_element_by_xpath(f"//a[@data-id='{id_}']")
+        note_element = self.find_element_wait(By.XPATH, f"//a[@data-id='{id_}']")
         note_element.click()
 
         # Also consider one minute in the past, since there is a little time difference.
