@@ -56,7 +56,7 @@ class Notebook(base.Test):
         self.fill_modal_dialog(name)
 
     def delete_notebook(self, element):
-        logging.debug(f"UI: delete notebook")
+        logging.debug("UI: delete notebook")
         # Notebooks are only deletable by right click.
 
         # second option of dropdown

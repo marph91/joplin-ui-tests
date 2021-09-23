@@ -102,7 +102,7 @@ class Test(unittest.TestCase):
         # add the duration to each test
         print(f"{time.time() - self.start_time:.3f} s, ", end="", flush=True)
 
-        if any([error for _, error in self._outcome.errors if error is not None]):
+        if any(error for _, error in self._outcome.errors if error is not None):
             datestr = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
             self.driver.get_screenshot_as_file(
                 f"debug/{datestr}_{self.id()}_webdriver.png"

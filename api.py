@@ -75,7 +75,7 @@ class Api:
             data["parent_id"] = parent_id
         self.post("/folders", data=data)
 
-    def add_note(
+    def add_note(  # pylint: disable=too-many-arguments
         self,
         name: str = "test",
         content: str = "test_content",

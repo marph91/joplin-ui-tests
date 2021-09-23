@@ -145,7 +145,11 @@ disable=print-statement,
         exception-escape,
         comprehension-escape,
         missing-class-docstring,
-        missing-function-docstring
+        missing-function-docstring,
+        # Use fstring formatting, because it's more convenient.
+        # If logging gets too slow, change it.
+        # See: https://stackoverflow.com/a/34634301/7410886
+        logging-fstring-interpolation
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
