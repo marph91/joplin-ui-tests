@@ -29,7 +29,7 @@ def download_chromedriver(destination: str = "./bin/chromedriver"):
         )
         response.raise_for_status()
         with zipfile.ZipFile(io.BytesIO(response.content)) as chromedriver_zip:
-            chromedriver_zip.extract("chromedriver", path=".")
+            chromedriver_zip.extract("chromedriver", path="./bin")
     if not os.access(destination, os.X_OK):
         # readd the executable flag
         os.chmod(destination, os.stat(destination).st_mode | stat.S_IEXEC)
@@ -40,7 +40,7 @@ def download_joplin(destination: str = "./bin/joplin.AppImage"):
     if not os.path.exists(destination):
         # TODO: How to download the latest release?
         response = requests.get(
-            "https://github.com/laurent22/joplin/releases/download/v2.4.7/Joplin-2.4.7.AppImage"  # pylint: disable=line-too-long
+            "https://github.com/laurent22/joplin/releases/download/v2.4.8/Joplin-2.4.8.AppImage"  # pylint: disable=line-too-long
         )
         response.raise_for_status()
         with open(destination, "wb") as outfile:
