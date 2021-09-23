@@ -1,6 +1,6 @@
 """Tests for the editor on the right."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from parameterized import parameterized
 import pyautogui
@@ -22,9 +22,13 @@ class Header(base.Test):
         note_element = self.editor.find_element_by_xpath(f"//a[@data-id='{id_}']")
         note_element.click()
 
-        current_time_formatted = datetime.now().strftime("%d/%m/%Y %H:%M")
+        # Also consider one minute in the past, since there is a little time difference.
+        valid_dates = (
+            (datetime.now() - timedelta(minutes=1)).strftime("%d/%m/%Y %H:%M"),
+            datetime.now().strftime("%d/%m/%Y %H:%M"),
+        )
         timelabel = self.editor.find_element_by_class_name("updated-time-label")
-        self.assertEqual(timelabel.text, current_time_formatted)
+        self.assertIn(timelabel.text, valid_dates)
 
         # avoid language specific locators
         editor_toolbar = self.editor.find_element_by_class_name("editor-toolbar")
@@ -35,8 +39,8 @@ class Header(base.Test):
                 "//div[@class='note-property-box']/*[2]"
             )
 
-            self.assertEqual(note_properties[0].text, current_time_formatted)  # created
-            self.assertEqual(note_properties[1].text, current_time_formatted)  # updated
+            self.assertIn(note_properties[0].text, valid_dates)  # created
+            self.assertIn(note_properties[1].text, valid_dates)  # updated
             # note_properties[2]  # url
             # note_properties[3]  # location
             # note_properties[4]  # history, language specific
