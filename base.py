@@ -202,9 +202,11 @@ class Test(unittest.TestCase):
         dialog = self.driver.find_element_by_class_name("modal-layer")
         self.wait_for(dialog.is_displayed)
         input_element = dialog.find_element_by_tag_name("input")
-        # TODO: Sometimes clear() doesn't work. Maybe a workaround should be used.
+        # Sometimes clear() and other workarounds don't work.
+        # Use backspace instead. It takes longer, but works reliably.
         # See: https://stackoverflow.com/a/50682169/7410886
-        input_element.clear()
+        while input_element.get_attribute("value") != "":
+            input_element.send_keys(Keys.BACKSPACE)
         input_element.send_keys(input_)
         if tag:
             input_element.send_keys(Keys.ENTER)
