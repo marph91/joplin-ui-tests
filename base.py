@@ -57,6 +57,7 @@ class IdGenerator:  # pylint: disable=too-few-public-methods
     def __call__(self) -> str:
         return_id = str(self.id_int).zfill(32)  # has to be 32 characters
         self.id_int += 1
+        logging.debug(f"ID requested. Returned {return_id=}")
         return return_id
 
 

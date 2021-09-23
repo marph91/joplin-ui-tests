@@ -109,7 +109,6 @@ def parse_arguments():
 
 
 def run_tests(args):
-    os.makedirs(args.debug_dir, exist_ok=True)
     # TODO: Is there a better way to pass the debug dir to the tests?
     os.environ["TEST_DEBUG_DIR"] = args.debug_dir
     with optional(not args.no_xvfb, Xvfb(width=1920, height=1080)), optional(
@@ -133,8 +132,9 @@ def run_tests(args):
 
 def main():
     args = parse_arguments()
-    logging.debug(f"CLI arguments: {args}")
+    os.makedirs(args.debug_dir, exist_ok=True)
     configure_logging(args.debug_dir)
+    logging.debug(f"CLI arguments: {args}")
     run_tests(args)
 
 
