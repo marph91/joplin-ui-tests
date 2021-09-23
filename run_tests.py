@@ -29,9 +29,9 @@ def optional(condition: bool, context_manager: typing.ContextManager):
 class Recording(contextlib.ContextDecorator):
     """Record the complete test run with ffmpeg."""
 
-    def __init__(self, filename="output.mp4"):
+    def __init__(self, path="debug/output.mp4"):
         super().__init__()
-        self.filename = filename
+        self.path = path
         self.recording_process = None
 
     def __enter__(self):
@@ -54,7 +54,7 @@ class Recording(contextlib.ContextDecorator):
                 "-framerate", "20",
                 "-f", "x11grab",
                 "-i", os.getenv("DISPLAY"),
-                f"debug/{self.filename}",
+                self.path,
             ],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
@@ -69,7 +69,7 @@ class Recording(contextlib.ContextDecorator):
         return False  # don't suppress exceptions
 
 
-def configure_logging():
+def configure_logging(debug_dir: str):
     # Don't spam the log. See: https://stackoverflow.com/a/11029841/7410886
     logging.getLogger("selenium.webdriver.remote.remote_connection").setLevel(
         logging.WARNING
@@ -78,7 +78,7 @@ def configure_logging():
     logging.getLogger("urllib3").setLevel(logging.WARNING)
 
     logging.basicConfig(
-        filename="debug/test.log",
+        filename=f"{debug_dir}/test.log",
         filemode="w",
         format="%(asctime)s [%(levelname)s]: %(message)s",
         level=logging.DEBUG,
@@ -92,6 +92,9 @@ def configure_logging():
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "--debug-dir", type=str, default="debug", help="Debug output directory."
+    )
+    parser.add_argument(
         "--no-xvfb", action="store_true", help="Don't run the tests inside xvfb."
     )
     parser.add_argument(
@@ -102,13 +105,15 @@ def parse_arguments():
     )
     parser.add_argument("--testname", help="Run a subset of tests.")
     args = parser.parse_args()
-    logging.debug(f"CLI arguments: {args}")
     return args
 
 
 def run_tests(args):
+    os.makedirs(args.debug_dir, exist_ok=True)
+    # TODO: Is there a better way to pass the debug dir to the tests?
+    os.environ["TEST_DEBUG_DIR"] = args.debug_dir
     with optional(not args.no_xvfb, Xvfb(width=1920, height=1080)), optional(
-        not args.no_recording, Recording()
+        not args.no_recording, Recording(path=f"{args.debug_dir}/output.mp4")
     ):
         # The driver should be started in the xvfb context.
         import driver  # pylint: disable=import-outside-toplevel
@@ -127,8 +132,9 @@ def run_tests(args):
 
 
 def main():
-    configure_logging()
     args = parse_arguments()
+    logging.debug(f"CLI arguments: {args}")
+    configure_logging(args.debug_dir)
     run_tests(args)
 
 

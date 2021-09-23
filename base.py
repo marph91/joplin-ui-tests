@@ -62,11 +62,10 @@ class Test(unittest.TestCase):
         super().__init__(methodName=methodName)
 
         self.new_id = IdGenerator()
+        self.debug_dir = os.getenv("TEST_DEBUG_DIR")
 
     @classmethod
     def setUpClass(cls):
-        os.makedirs("debug", exist_ok=True)
-
         cls.api = api
         cls.driver = driver
 
@@ -106,9 +105,11 @@ class Test(unittest.TestCase):
         if any(error for _, error in self._outcome.errors if error is not None):
             datestr = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
             self.driver.get_screenshot_as_file(
-                f"debug/{datestr}_{self.id()}_webdriver.png"
+                f"{self.debug_dir}/{datestr}_{self.id()}_webdriver.png"
             )
-            ImageGrab.grab().save(f"debug/{datestr}_{self.id()}_xvfb.png", "PNG")
+            ImageGrab.grab().save(
+                f"{self.debug_dir}/{datestr}_{self.id()}_xvfb.png", "PNG"
+            )
 
     @staticmethod
     def wait_for(
