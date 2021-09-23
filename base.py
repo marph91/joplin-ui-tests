@@ -220,13 +220,13 @@ class Test(unittest.TestCase):
         note_element.click()
         return note_element, note["id"], notebook_element, note["parent_id"]
 
-    def select_random_tag(self):
+    def get_random_tag(self):
+        # Don't click the tag, since loading the note takes time.
         tags = self.api.get_tags()
         tag_id = random.choice(tags)["id"]
         tag_element = self.driver.find_element_by_xpath(
             f"//div[@data-tag-id='{tag_id}']"
         )
-        tag_element.click()
         return tag_element, tag_id
 
     def fill_modal_dialog(

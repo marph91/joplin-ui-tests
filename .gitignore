@@ -2,4 +2,4 @@ __pycache__
 .mypy_cache
 --remote-debugging-port=0
 bin
-debug
+debug*

@@ -248,7 +248,7 @@ class Tag(base.Test):
 
     def test_rename_tag(self):
         new_name = self._testMethodName
-        tag_element, tag_id = self.select_random_tag()
+        tag_element, tag_id = self.get_random_tag()
 
         # rename by right click
         ActionChains(self.driver).context_click(tag_element).perform()
