@@ -100,14 +100,12 @@ class Test(unittest.TestCase):
         # add the duration to each test
         print(f"{time.time() - self.start_time:.3f} s, ", end="", flush=True)
 
-        for _, error in self._outcome.errors:
-            # TODO: Check only once for error?
-            if error is not None:
-                datestr = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-                self.driver.get_screenshot_as_file(
-                    f"debug/{datestr}_{self.id()}_webdriver.png"
-                )
-                ImageGrab.grab().save(f"debug/{datestr}_{self.id()}_xvfb.png", "PNG")
+        if any([error for _, error in self._outcome.errors if error is not None]):
+            datestr = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+            self.driver.get_screenshot_as_file(
+                f"debug/{datestr}_{self.id()}_webdriver.png"
+            )
+            ImageGrab.grab().save(f"debug/{datestr}_{self.id()}_xvfb.png", "PNG")
 
     @staticmethod
     def wait_for(
