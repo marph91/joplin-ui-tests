@@ -1,5 +1,6 @@
 """Utilities to interact with the API."""
 
+import time
 from typing import Optional
 
 import requests
@@ -113,9 +114,15 @@ try:
     api.ping()
 except requests.exceptions.ConnectionError:
     buttons[0].click()  # activate button
-try:
-    api.get_notes()
-except requests.exceptions.ConnectionError:
-    # try a second time
-    api.get_notes()
+
+# try three times until the API is available
+for _ in range(3):
+    try:
+        api.ping()
+        break
+    except requests.exceptions.ConnectionError:
+        # try another time
+        time.sleep(0.1)
+api.ping()
+
 buttons[-1].click()  # back button
