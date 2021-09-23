@@ -15,6 +15,21 @@ import menu
 
 
 class Note(base.Test):
+    note = None
+    note_id = None
+    notebook = None
+    notebook_id = None
+
+    def setUp(self):
+        super().setUp()
+        if self.__class__.note is None:
+            (
+                self.__class__.note,
+                self.__class__.note_id,
+                self.__class__.notebook,
+                self.__class__.notebook_id,
+            ) = self.select_random_note()
+
     def add_note(
         self,
         way: str = "button",
@@ -46,13 +61,10 @@ class Note(base.Test):
         itertools.product(("note", "todo"), ("button", "hotkey", "top_menu"))
     )
     def test_add(self, type_, way):
-
-        _, notebook_id = self.select_random_notebook()
-
-        note_count = len(self.api.get_notes(parent_id=notebook_id))
+        note_count = len(self.api.get_notes(parent_id=self.notebook_id))
         self.add_note(title=self._testMethodName, way=way, todo=type_ == "todo")
         self.wait_for(
-            lambda: len(self.api.get_notes(notebook_id)) == note_count + 1,
+            lambda: len(self.api.get_notes(self.notebook_id)) == note_count + 1,
             message=f"Adding note by {way} failed.",
         )
 
@@ -70,11 +82,10 @@ class Note(base.Test):
         )
 
     def test_duplicate_note(self):
-        note_element, _ = self.select_random_note()
         note_count = len(self.api.get_notes())
 
         # duplicate by right click
-        ActionChains(self.driver).context_click(note_element).perform()
+        ActionChains(self.driver).context_click(self.note).perform()
         menu.choose_entry(3)
 
         self.wait_for(
@@ -84,7 +95,7 @@ class Note(base.Test):
 
         notes = self.api.get_notes(query={"fields": "parent_id,title,body"})
         duplicated_notes = [
-            note for note in notes if note["title"].startswith(note_element.text)
+            note for note in notes if note["title"].startswith(self.note.text)
         ]
         self.assertEqual(len(duplicated_notes), 2)
         self.assertEqual(
@@ -93,16 +104,16 @@ class Note(base.Test):
         self.assertEqual(duplicated_notes[0]["body"], duplicated_notes[1]["body"])
 
     def test_switch_type(self):
-        note_element, note_id = self.select_random_note()
-
         def switch_type():
             # switch by right click
-            ActionChains(self.driver).context_click(note_element).perform()
+            ActionChains(self.driver).context_click(self.note).perform()
             menu.choose_entry(5)
 
         def is_todo():
             return bool(
-                self.api.get_note(id_=note_id, query={"fields": "is_todo"})["is_todo"]
+                self.api.get_note(id_=self.note_id, query={"fields": "is_todo"})[
+                    "is_todo"
+                ]
             )
 
         initial = is_todo()
@@ -112,7 +123,6 @@ class Note(base.Test):
         self.assertEqual(initial, is_todo())
 
     def test_complete_todo(self):
-        self.select_random_notebook()
         id_ = self.new_id()
         self.api.add_note(self._testMethodName, id_=id_, todo=True)
         todo_checkbox = self.find_element_present(
@@ -135,10 +145,8 @@ class Note(base.Test):
         self.assertEqual(todo_completed(), 0)
 
     def test_markdown_link(self):
-        note_element, note_id = self.select_random_note()
-
         # get link by right click
-        ActionChains(self.driver).context_click(note_element).perform()
+        ActionChains(self.driver).context_click(self.note).perform()
         menu.choose_entry(6)
 
-        self.assertEqual(f"[{note_element.text}](:/{note_id})", pyperclip.paste())
+        self.assertEqual(f"[{self.note.text}](:/{self.note_id})", pyperclip.paste())

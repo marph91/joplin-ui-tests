@@ -20,6 +20,20 @@ class Sidebar(base.Test):
 
 
 class Notebook(base.Test):
+    note = None
+    notebook = None
+    notebook_id = None
+
+    def setUp(self):
+        super().setUp()
+        if self.__class__.note is None:
+            (
+                self.__class__.note,
+                _,
+                self.__class__.notebook,
+                self.__class__.notebook_id,
+            ) = self.select_random_note()
+
     def add_notebook(self, name: str = "test", way: str = "button", parent=None):
         logging.debug(f"UI: add notebook {name=}, {way=}")
 
@@ -85,10 +99,8 @@ class Notebook(base.Test):
         # TODO: check for correct name
         # TODO: check for correct place (parent element)
 
-        notebook_element, _ = self.select_random_notebook()
-
         notebook_count = len(self.api.get_notebooks())
-        self.add_notebook(name=self._testMethodName, way=way, parent=notebook_element)
+        self.add_notebook(name=self._testMethodName, way=way, parent=self.notebook)
         self.wait_for(
             lambda: len(self.api.get_notebooks()) == notebook_count + 1,
             message=f"Adding notebook by {way} failed.",
@@ -109,17 +121,16 @@ class Notebook(base.Test):
     def test_rename_notebook(self):
         # Notebooks are only renamable by right click.
         new_name = self._testMethodName
-        notebook_element, notebook_id = self.select_random_notebook()
 
         # rename notebook via UI
-        ActionChains(self.driver).context_click(notebook_element).perform()
+        ActionChains(self.driver).context_click(self.notebook).perform()
         menu.choose_entry(3)
         self.fill_modal_dialog(new_name)
 
         # check against API reference
         notebooks = self.api.get_notebooks()
         renamed_notebook = [
-            notebook for notebook in notebooks if notebook["id"] == notebook_id
+            notebook for notebook in notebooks if notebook["id"] == self.notebook_id
         ][0]
         self.assertEqual(renamed_notebook["title"], new_name)
 
@@ -190,7 +201,7 @@ class Tag(base.Test):
         super().setUp()
         # Ensure a note is selected. Add all the tags to this note.
         if self.__class__.note is None:
-            self.__class__.note, _ = self.select_random_note()
+            self.__class__.note, _, _, _ = self.select_random_note()
 
     def add_tag(self, name: str = "test", way: str = "bottom_bar"):
         logging.debug(f"UI: add tag {name=}, {way=}")

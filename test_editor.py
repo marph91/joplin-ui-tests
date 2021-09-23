@@ -64,7 +64,7 @@ class Editor(base.Test):
         super().setUp()
         # Ensure a note is selected, because only then the editor is visible.
         if self.__class__.note is None:
-            self.__class__.note, _ = self.select_random_note()
+            self.__class__.note, _, _, _ = self.select_random_note()
 
     def toggle_layout(self, way="button"):
 

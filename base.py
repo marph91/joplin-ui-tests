@@ -199,7 +199,7 @@ class Test(unittest.TestCase):
             By.XPATH, f"//a[@data-id='{note['id']}']"
         )
         note_element.click()
-        return note_element, note["id"]
+        return note_element, note["id"], notebook_element, note["parent_id"]
 
     def select_random_tag(self):
         tags = self.api.get_tags()
