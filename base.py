@@ -39,7 +39,10 @@ def run_again_at_failure(func):
         try:
             func(self, *args, **kwargs)
         except:  # pylint: disable=bare-except
-            print(f"{func.__name__}: first run failed!")
+            message = f"{func.__name__}: first run failed! Repeat once..."
+            logging.warn(message)
+            print(message)
+            pyautogui.click()  # focus the window
             func(self, *args, **kwargs)
 
     return wrapper
@@ -150,6 +153,11 @@ class Test(unittest.TestCase):
         return WebDriverWait(self.driver, timeout).until(
             EC.element_to_be_clickable((by_, locator))
         )
+
+    def is_focussed(self, element) -> bool:
+        """Check if an element is in focus."""
+        # https://stackoverflow.com/a/11998624/7410886
+        return element == self.driver.switch_to.active_element
 
     def get_notebooks(self):
         logging.debug("UI: get notebooks")

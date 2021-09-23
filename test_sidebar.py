@@ -222,6 +222,14 @@ class Tag(base.Test):
         self.fill_modal_dialog(name, tag=True)
 
     @parameterized.expand(("bottom_bar", "hotkey", "right_click", "top_menu"))
+    # TODO: Failure caused by late loading of the note label count, which steals
+    # the focus while the top menu is accessed. Options:
+    # - Repeat the test
+    # - Disable the sidepanel
+    # - Check if correct element is focussed:
+    #   self.is_focussed(
+    #       self.driver.find_element_by_xpath("//div[@class='modal-layer']//input"))
+    @base.run_again_at_failure
     def test_add_tag(self, way):
         tag_count = len(self.api.get_tags())
         self.add_tag(name=self._testMethodName, way=way)
