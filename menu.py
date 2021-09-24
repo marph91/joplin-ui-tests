@@ -2,7 +2,7 @@
 
 import dataclasses
 import logging
-from typing import List, Sequence
+from typing import Dict, List, Optional, Sequence
 
 import pyautogui
 
@@ -176,16 +176,19 @@ TOP_MENU_LAYOUT = (
 )
 
 
-def choose_entry(position: int, key="down", confirm="enter"):
-    """Select an entry from an arbitrary menu."""
+def choose_entry(position: int, key: str = "down", confirm: str = "enter"):
+    """Select an entry from an arbitrary menu. The position has to be one based!"""
     pyautogui.press(key, presses=position)
     pyautogui.press(confirm)
 
 
-def top(path: List[str]):
+def top(path: List[str], skip: Optional[Dict[str, int]] = None):
     """Select an entry from the top menu."""
     # TODO: path gets modified, which can cause side effects
-    # TODO: handle non selectable entries
+
+    # skip non selectable entries
+    if skip is None:
+        skip = {}
 
     logging.debug(f"Selecting {path} from top menu.")
 
@@ -195,11 +198,12 @@ def top(path: List[str]):
     toplevel_entry = path.pop(0)
     match_index = [e.name for e in TOP_MENU_LAYOUT].index(toplevel_entry)
     choose_entry(match_index, key="right")
+    pyautogui.press("down")  # select the first entry, since match_index is zero based
     last_entry = TOP_MENU_LAYOUT[match_index]
 
     while path:
         # find next entry and select it
         next_entry = path.pop(0)
         match_index = [e.name for e in last_entry.subentries].index(next_entry)
-        choose_entry(match_index + 1)
+        choose_entry(match_index - skip.get(next_entry, 0))
         last_entry = last_entry.subentries[match_index]

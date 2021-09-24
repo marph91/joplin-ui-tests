@@ -157,6 +157,14 @@ class Test(unittest.TestCase):
             EC.element_to_be_clickable((by_, locator))
         )
 
+    def assert_contains(self, container, element):
+        """Assert that one element contains another."""
+        # TODO: Is there a better way?
+        self.assertNotEqual(element.get_attribute("outerHTML").strip(), "")
+        self.assertIn(
+            element.get_attribute("outerHTML"), container.get_attribute("outerHTML")
+        )
+
     def is_focussed(self, element) -> bool:
         """Check if an element is in focus."""
         # https://stackoverflow.com/a/11998624/7410886
@@ -171,7 +179,7 @@ class Test(unittest.TestCase):
         logging.debug("UI: get notes")
         # Finds notes and todos.
         return self.notelist.find_elements_by_xpath(
-            "//div[contains(@class, '-list-item')]/a"
+            "//div[contains(@class, '-list-item')]"
         )
 
     def scroll_vertical(self, element, height: int):

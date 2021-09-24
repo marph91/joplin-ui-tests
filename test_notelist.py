@@ -142,7 +142,7 @@ class Note(base.Test):
         self.assertGreaterEqual(t_completed_api, t_start)
         self.assertLessEqual(t_completed_api, t_end)
         todo_checkbox.click()
-        self.assertEqual(todo_completed(), 0)
+        self.wait_for(lambda: todo_completed() == 0)
 
     def test_markdown_link(self):
         # get link by right click
