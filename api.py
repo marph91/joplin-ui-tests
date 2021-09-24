@@ -54,6 +54,10 @@ class Api:
     def ping(self):
         return self.get("/ping")
 
+    def get_events(self, cursor: int = 0):
+        query = {"cursor": cursor}
+        return self.get("/events", query=query).json()["items"]
+
     def get_notebooks(self, parent_id: str = None):
         # TODO: Parent doesn't seem to be supported.
         parent = "" if parent_id is None else f"/folders/{parent_id}"

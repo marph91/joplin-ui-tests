@@ -115,6 +115,8 @@ class Test(unittest.TestCase):
                 f"{self.debug_dir}/{datestr}_{self.id()}_xvfb.png", "PNG"
             )
 
+        pyautogui.press("esc")  # close open dialog, if any
+
     @staticmethod
     def wait_for(
         func,
@@ -239,10 +241,17 @@ class Test(unittest.TestCase):
         return tag_element, tag_id
 
     def fill_modal_dialog(
-        self, input_: str, confirm_by_button: bool = False, tag: bool = False
+        self,
+        input_: str,
+        confirm_by_button: bool = False,
+        tag: bool = False,
+        wait_before_confirm: Optional[float] = None,
     ):
         """Fill out and confirm a modal dialog with one input."""
-        dialog = self.find_element_visible(By.CLASS_NAME, "modal-layer", timeout=5)
+        # There are two modal dialogs. Chose the one that is displayed.
+        dialog = self.find_element_visible(
+            By.XPATH, "//div[@class='modal-layer'][contains(@style, 'display: flex')]"
+        )
         input_element = dialog.find_element_by_tag_name("input")
         # Sometimes clear() and other workarounds don't work.
         # Use backspace instead. It takes longer, but works reliably.
@@ -250,6 +259,8 @@ class Test(unittest.TestCase):
         while input_element.get_attribute("value") != "":
             input_element.send_keys(Keys.BACKSPACE)
         input_element.send_keys(input_)
+        if wait_before_confirm is not None:
+            time.sleep(wait_before_confirm)
         if tag:
             input_element.send_keys(Keys.ENTER)
         if confirm_by_button:

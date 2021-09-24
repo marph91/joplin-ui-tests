@@ -183,6 +183,7 @@ class Notebook(base.Test):
 
     def test_drag_notebooks(self):
         self.skipTest("Drag and drop doesn't seem to work yet.")
+        # doc: https://github.com/laurent22/joplin#sub-notebooks
         # https://github.com/webdriverio/webdriverio/issues/4134
         # ActionChains(self.driver).drag_and_drop(
         #    self.get_notebooks()[0], self.get_notebooks()[1]
@@ -190,6 +191,7 @@ class Notebook(base.Test):
 
     def test_export_notebook(self):
         self.skipTest("Download dialog doesn't work yet.")
+        # doc: https://github.com/laurent22/joplin#exporting
         for _ in ("JEX", "RAW", "MD", "HTML (File)", "HTML (Directory)"):
             pass
 
