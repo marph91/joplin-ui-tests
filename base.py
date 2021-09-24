@@ -200,9 +200,7 @@ class Test(unittest.TestCase):
             ValueError("Not supported")
 
         # left button to confirm
-        # TODO: Selectable via webdriver?
-        # TODO: Why are two clicks necessary?
-        menu.choose_entry(2, key="left")
+        menu.choose_entry(1, key="left")
 
     def select_random_notebook(self, exclude: Optional[List[str]] = None):
         notebooks = self.api.get_notebooks()

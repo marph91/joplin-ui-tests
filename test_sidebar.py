@@ -79,9 +79,7 @@ class Notebook(base.Test):
         menu.choose_entry(2)
 
         # left button to confirm
-        # TODO: Selectable via webdriver?
-        # TODO: Why are two clicks necessary?
-        menu.choose_entry(2, key="left")
+        menu.choose_entry(1, key="left")
 
     @parameterized.expand(("button", "right_click", "top_menu"))
     def test_add_notebook(self, way):
@@ -243,13 +241,13 @@ class Tag(base.Test):
     def test_delete_tag(self):
         self.skipTest("TODO: Running this test causes multiple tests to fail.")
 
-        tag_element, _ = self.select_random_tag()
+        tag_element, _ = self.get_random_tag()
         tag_count = len(self.api.get_tags())
 
         # delete by right click
         ActionChains(self.driver).context_click(tag_element).perform()
         menu.choose_entry(1)
-        menu.choose_entry(2, key="left")
+        menu.choose_entry(1, key="left")
 
         self.wait_for(
             lambda: len(self.api.get_tags()) == tag_count - 1,
