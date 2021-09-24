@@ -35,7 +35,6 @@ GOTO_ANYTHING_MAP = {
     "top_menu": lambda: menu.top(["Go", "Goto anything"]),
 }
 
-
 # Order is mixed to don't select the same location twice.
 FOCUS_MAP = {
     "hotkey": {
@@ -52,6 +51,17 @@ FOCUS_MAP = {
             ["Go", "Focus", "Note title"], skip={"Focus": 1}
         ),
         "note_body": lambda: menu.top(["Go", "Focus", "Note body"], skip={"Focus": 1}),
+    },
+}
+
+TOGGLE_MAP = {
+    "sidebar": {
+        "hotkey": lambda: pyautogui.press("f10"),
+        "top_menu": lambda: menu.top(["View", "Toggle sidebar"]),
+    },
+    "notelist": {
+        "hotkey": lambda: pyautogui.press("f11"),
+        "top_menu": lambda: menu.top(["View", "Toggle note list"]),
     },
 }
 
@@ -129,6 +139,24 @@ class Go(base.Test):
 class View(base.Test):
     def test_app_title(self):
         self.assertEqual(self.driver.title, "Joplin")
+
+    def test_zz_application_layout(self):
+        # Execute last, since it makes the element references stale.
+        # TODO: Only a smoke test. The text is language specific.
+        menu.top(["View", "Change application layout"])
+        pyautogui.press("esc")
+
+    @parameterized.expand(
+        itertools.product(TOGGLE_MAP.keys(), TOGGLE_MAP["sidebar"].keys())
+    )
+    def test_toggle(self, location, way):
+        # "Toggle editor layout" is covered by "test_toggle_layout".
+        element_map = {"sidebar": self.sidebar, "notelist": self.notelist}
+        self.assertTrue(element_map[location].is_displayed())
+        TOGGLE_MAP[location][way]()
+        self.assertFalse(element_map[location].is_displayed())
+        TOGGLE_MAP[location][way]()
+        self.assertTrue(element_map[location].is_displayed())
 
     @parameterized.expand(ZOOM_MAP.keys())
     def test_zoom(self, way):

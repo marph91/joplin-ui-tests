@@ -20,6 +20,11 @@ class Header(base.Test):
             self.__class__.notebook, _ = self.select_random_notebook()
 
     def test_note_properties(self):
+        def get_note_properties():
+            return self.editor.find_elements_by_xpath(
+                "//div[@class='note-property-box']/*[2]"
+            )
+
         id_ = self.new_id()
         self.api.add_note(name=self._testMethodName, id_=id_)
         note_element = self.find_element_present(By.XPATH, f"//a[@data-id='{id_}']")
@@ -38,9 +43,10 @@ class Header(base.Test):
         toolbar_buttons = editor_toolbar.find_elements_by_class_name("button")
         toolbar_buttons[-1].click()  # note properties
         try:
-            note_properties = self.editor.find_elements_by_xpath(
-                "//div[@class='note-property-box']/*[2]"
-            )
+            note_properties = get_note_properties()
+            if note_properties == []:
+                # Try again, because the window can be empty at first try.
+                note_properties = get_note_properties()
 
             self.assertIn(note_properties[0].text, valid_dates)  # created
             self.assertIn(note_properties[1].text, valid_dates)  # updated
