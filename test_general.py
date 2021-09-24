@@ -92,31 +92,40 @@ class Go(base.Test):
         itertools.product(FOCUS_MAP.keys(), FOCUS_MAP["hotkey"].keys())
     )
     def test_focus(self, way, location):
-        if way == "top_menu":
-            self.skipTest("TODO: Non selectable 'forward/back' is not consistent.")
         FOCUS_MAP[way][location]()
 
         self.assert_contains(
             self.base_element_map[location], self.driver.switch_to.active_element
         )
 
-    def test_go_back_forward(self):
+    def test_aa_go_back_forward(self):
+        # Run first to have a baseline for the coming tests.
+        # The baseline is: Forward - not selectable, backward - selectable.
+
         # All notes should be in the current notebook.
         notes = self.get_notes()
         self.assertEqual(len(notes), 3)
 
-        notes[0].click()
-        notes[1].click()
-        self.assertNotIn("selected", notes[0].get_attribute("class"))
-        self.assertIn("selected", notes[1].get_attribute("class"))
+        def is_selected(element):
+            # Seleniums is_selected() is not usable in this case.
+            return "selected" in element.get_attribute("class")
+
+        # Click all three notes to have the selectable backward also when going back.
+        for note in notes:
+            note.click()
+        self.assertFalse(is_selected(notes[0]))
+        self.assertFalse(is_selected(notes[1]))
+        self.assertTrue(is_selected(notes[2]))
 
         menu.top(["Go", "Back"])
-        self.assertIn("selected", notes[0].get_attribute("class"))
-        self.assertNotIn("selected", notes[1].get_attribute("class"))
+        self.assertFalse(is_selected(notes[0]))
+        self.assertTrue(is_selected(notes[1]))
+        self.assertFalse(is_selected(notes[2]))
 
         menu.top(["Go", "Forward"])
-        self.assertNotIn("selected", notes[0].get_attribute("class"))
-        self.assertIn("selected", notes[1].get_attribute("class"))
+        self.assertFalse(is_selected(notes[0]))
+        self.assertFalse(is_selected(notes[1]))
+        self.assertTrue(is_selected(notes[2]))
 
     @parameterized.expand(GOTO_ANYTHING_MAP.keys())
     def test_goto_anything(self, way):
