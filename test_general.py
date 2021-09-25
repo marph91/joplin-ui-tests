@@ -73,7 +73,7 @@ class Go(base.Test):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        for key in GOTO_ANYTHING_MAP.keys():
+        for key in GOTO_ANYTHING_MAP:
             cls.api.add_note(name=key, content=key)
 
     def setUp(self):
@@ -149,7 +149,8 @@ class View(base.Test):
     def test_app_title(self):
         self.assertEqual(self.driver.title, "Joplin")
 
-    def test_zz_application_layout(self):
+    @staticmethod
+    def test_zz_application_layout():
         # Execute last, since it makes the element references stale.
         # TODO: Only a smoke test. The text is language specific.
         menu.top(["View", "Change application layout"])

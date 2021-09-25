@@ -40,7 +40,7 @@ def run_again_at_failure(func):
             func(self, *args, **kwargs)
         except:  # pylint: disable=bare-except
             message = f"{func.__name__}: first run failed! Repeat once..."
-            logging.warn(message)
+            logging.warning(message)
             print(message)
             pyautogui.click()  # focus the window
             func(self, *args, **kwargs)
