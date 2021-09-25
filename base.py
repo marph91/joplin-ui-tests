@@ -108,12 +108,15 @@ class Test(unittest.TestCase):
 
         if any(error for _, error in self._outcome.errors if error is not None):
             datestr = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-            self.driver.get_screenshot_as_file(
-                f"{self.debug_dir}/{datestr}_{self.id()}_webdriver.png"
-            )
-            ImageGrab.grab().save(
-                f"{self.debug_dir}/{datestr}_{self.id()}_xvfb.png", "PNG"
-            )
+            base_name = f"{self.debug_dir}/{datestr}_{self.id()}"
+
+            # save screenshots of electron app and xvfb
+            self.driver.get_screenshot_as_file(f"{base_name}_webdriver.png")
+            ImageGrab.grab().save(f"{base_name}_xvfb.png", "PNG")
+            # save the browser log
+            with open(f"{base_name}_browser_log.txt", "w") as outfile:
+                log = self.driver.get_log("browser")
+                outfile.write("\n".join([str(line) for line in log]))
 
         pyautogui.press("esc")  # close open dialog, if any
 
