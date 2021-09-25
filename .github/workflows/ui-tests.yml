@@ -1,0 +1,28 @@
+name: ui-tests
+
+on: [push]
+
+jobs:
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install system dependencies
+        run: >
+          sudo apt update &&
+          sudo apt install --yes
+          ffmpeg
+          xvfb
+          python3-tk  # pyautogui
+          xsel        # pyperclip
+      - name: Install pip dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests
+        run: |
+          touch ~/.Xauthority  # workaround for https://github.com/python-xlib/python-xlib/issues/66
+          python run_tests.py
+      - name: Upload test output
+        uses: actions/upload-artifact@v1
+        with:
+          name: debug_output
+          path: debug

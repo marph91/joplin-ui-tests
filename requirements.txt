@@ -1,0 +1,7 @@
+parameterized
+Pillow
+pyautogui
+pyperclip
+requests
+selenium
+xvfbwrapper

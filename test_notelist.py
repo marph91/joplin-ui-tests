@@ -146,6 +146,11 @@ class Note(base.Test):
         self.wait_for(lambda: todo_completed() == 0)
 
     def test_markdown_link(self):
+        try:
+            pyperclip.paste()
+        except pyperclip.PyperclipException:
+            self.skipTest("TODO: pyperclip doesn't work in github actions xvfb.")
+
         # get link by right click
         ActionChains(self.driver).context_click(self.note).perform()
         menu.choose_entry(6)
