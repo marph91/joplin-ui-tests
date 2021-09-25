@@ -25,31 +25,31 @@ class Api:
         query_str = "&".join([f"{key}={val}" for key, val in query.items()])
         return f"{self.url}{path}?{query_str}"
 
-    def get(self, path: str, query: Optional[dict] = None):
-        logging.debug(f"API: get request: {path=}, {query=}")
-        response = requests.get(self.create_url(path, query))
-        if response.status_code != 200:
-            print(response.json())
-        response.raise_for_status()
-        return response
-
-    def post(
-        self, path: str, query: Optional[dict] = None, data: Optional[dict] = None
+    def request(
+        self,
+        method: str,
+        path: str,
+        query: Optional[dict] = None,
+        data: Optional[dict] = None,
     ):
-        logging.debug(f"API: post request: {path=}, {query=}, {data=}")
-        response = requests.post(self.create_url(path, query), json=data)
+        logging.debug(f"API: {method} request: {path=}, {query=}, {data=}")
+        response = getattr(requests, method)(self.create_url(path, query), json=data)
         if response.status_code != 200:
             print(response.json())
         response.raise_for_status()
         return response
 
-    def delete(self, path: str):
-        logging.debug(f"API: delete request: {path=}")
-        response = requests.delete(self.create_url(path))
-        if response.status_code != 200:
-            print(response.json())
-        response.raise_for_status()
-        return response
+    def get(self, *args, **kwargs):
+        """Convenience method to issue a get request."""
+        return self.request("get", *args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        """Convenience method to issue a post request."""
+        return self.request("post", *args, **kwargs)
+
+    def delete(self, *args):
+        """Convenience method to issue a delete request."""
+        return self.request("delete", *args)
 
     def ping(self):
         return self.get("/ping")
