@@ -177,7 +177,7 @@ class Notebook(base.Test):
     def test_show_all_notes(self):
         all_notes_button = self.sidebar.find_element_by_class_name("all-notes")
         all_notes_button.click()
-        self.assertEqual(len(self.get_notes()), len(self.api.get_notes()))
+        self.wait_for(lambda: len(self.get_notes()) == len(self.api.get_notes()))
 
     def test_drag_notebooks(self):
         self.skipTest("Drag and drop doesn't seem to work yet.")

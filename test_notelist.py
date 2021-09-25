@@ -138,6 +138,7 @@ class Note(base.Test):
         t_start = time.time() * 1000  # ms
         todo_checkbox.click()
         t_end = time.time() * 1000  # ms
+        self.wait_for(lambda: todo_completed() != 0)
         t_completed_api = todo_completed()
         self.assertGreaterEqual(t_completed_api, t_start)
         self.assertLessEqual(t_completed_api, t_end)
