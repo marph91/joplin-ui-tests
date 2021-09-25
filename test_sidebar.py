@@ -189,6 +189,16 @@ class Notebook(base.Test):
 
     def test_export_notebook(self):
         self.skipTest("Download dialog doesn't work yet.")
+
+        # top menu -> export all
+        menu.top(["File", "Export all", "PDF"])
+
+        # right click -> export note or notebook
+        ActionChains(self.driver).context_click(self.notebook).perform()
+        menu.choose_entry(4)
+        pyautogui.press("right")
+        menu.choose_entry(3)
+
         # doc: https://github.com/laurent22/joplin#exporting
         for _ in ("JEX", "RAW", "MD", "HTML (File)", "HTML (Directory)"):
             pass

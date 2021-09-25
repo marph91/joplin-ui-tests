@@ -92,14 +92,19 @@ driver = webdriver.remote.webdriver.WebDriver(
 )
 
 # TODO: How to properly download/export?
+# This seems to be not the usual chrome download.
 # https://stackoverflow.com/a/40656336/7410886
+# https://stackoverflow.com/a/59841109/7410886
 # options = webdriver.ChromeOptions()
 # options.add_experimental_option(
-#    "prefs",
-#    {
-#        "download.default_directory": "~/tmp",
-#        "download.prompt_for_download": False,
-#        "download.directory_upgrade": True,
-#        "safebrowsing.enabled": True,
-#    },
+#     "prefs",
+#     {
+#         "download.default_directory": "home/martin/tmp",
+#         "download.prompt_for_download": False,
+#         # "download.directory_upgrade": True,
+#         "download.extensions_to_open": "pdf",#"text/x-markdown"
+#         "safebrowsing.enabled": True,
+#     },
 # )
+# options.add_argument("--safebrowsing-disable-download-protection")
+# options.add_argument("safebrowsing-disable-extension-blacklist")
