@@ -14,16 +14,9 @@ import menu
 
 
 class Api:
-    def __init__(self, token):
-        self.url = "http://localhost:41184"
+    def __init__(self, token: str, url: str = "http://localhost:41184"):
+        self.url = url
         self.token = token
-
-    def create_url(self, path: str, query: Optional[dict] = None) -> str:
-        if query is None:
-            query = {}
-        query["token"] = self.token  # TODO: extending the dict may have side effects
-        query_str = "&".join([f"{key}={val}" for key, val in query.items()])
-        return f"{self.url}{path}?{query_str}"
 
     def request(
         self,
@@ -33,7 +26,12 @@ class Api:
         data: Optional[dict] = None,
     ):
         logging.debug(f"API: {method} request: {path=}, {query=}, {data=}")
-        response = getattr(requests, method)(self.create_url(path, query), json=data)
+        if query is None:
+            query = {}
+        query["token"] = self.token  # TODO: extending the dict may have side effects
+        query_str = "&".join([f"{key}={val}" for key, val in query.items()])
+
+        response = getattr(requests, method)(f"{self.url}{path}?{query_str}", json=data)
         if response.status_code != 200:
             print(response.json())
         response.raise_for_status()
