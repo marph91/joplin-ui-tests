@@ -85,10 +85,10 @@ class Notebook(base.Test):
     def test_add_notebook(self, way):
         # TODO: check for correct name
 
-        notebook_count = len(self.api.get_notebooks())
+        notebook_count = self.get_notebook_count_api()
         self.add_notebook(name=self._testMethodName, way=way)
         self.wait_for(
-            lambda: len(self.api.get_notebooks()) == notebook_count + 1,
+            lambda: self.get_notebook_count_api() == notebook_count + 1,
             message=f"Adding notebook by {way} failed.",
         )
 
@@ -97,10 +97,10 @@ class Notebook(base.Test):
         # TODO: check for correct name
         # TODO: check for correct place (parent element)
 
-        notebook_count = len(self.api.get_notebooks())
+        notebook_count = self.get_notebook_count_api()
         self.add_notebook(name=self._testMethodName, way=way, parent=self.notebook)
         self.wait_for(
-            lambda: len(self.api.get_notebooks()) == notebook_count + 1,
+            lambda: self.get_notebook_count_api() == notebook_count + 1,
             message=f"Adding notebook by {way} failed.",
         )
 
@@ -109,10 +109,10 @@ class Notebook(base.Test):
         # TODO: check if correct notebook got deleted
 
         notebook_element, _ = self.select_random_notebook(exclude=[self.notebook_id])
-        notebook_count = len(self.api.get_notebooks())
+        notebook_count = self.get_notebook_count_api()
         self.delete_notebook(notebook_element)
         self.wait_for(
-            lambda: len(self.api.get_notebooks()) == notebook_count - 1,
+            lambda: self.get_notebook_count_api() == notebook_count - 1,
             message="Deleting notebook by right click failed.",
         )
 
@@ -126,7 +126,7 @@ class Notebook(base.Test):
         self.fill_modal_dialog(new_name)
 
         # check against API reference
-        notebooks = self.api.get_notebooks()
+        notebooks = self.api.get_notebooks()["items"]
         renamed_notebook = [
             notebook for notebook in notebooks if notebook["id"] == self.notebook_id
         ][0]
@@ -152,13 +152,15 @@ class Notebook(base.Test):
             return actual
 
         # Add a note to have at least one notebook with content.
-        self.api.add_note(name=self._testMethodName)
-        notebooks = self.get_notebooks()
+        self.api.add_note(title=self._testMethodName)
+        notebooks = self.get_notebooks()["items"]
         for notebook in notebooks:
             # Sometimes the note count needs time to update.
             self.wait_for(
                 lambda: len(
-                    self.api.get_notes(notebook.get_attribute("data-folder-id"))
+                    self.api.get_notes(
+                        notebook_id=notebook.get_attribute("data-folder-id")
+                    )
                 )
                 == get_note_count_by_label(notebook),
                 timeout=3,
@@ -177,14 +179,14 @@ class Notebook(base.Test):
     def test_show_all_notes(self):
         all_notes_button = self.sidebar.find_element_by_class_name("all-notes")
         all_notes_button.click()
-        self.wait_for(lambda: len(self.get_notes()) == len(self.api.get_notes()))
+        self.wait_for(lambda: len(self.get_notes()) == self.get_note_count_api())
 
     def test_drag_notebooks(self):
         self.skipTest("Drag and drop doesn't seem to work yet.")
         # doc: https://github.com/laurent22/joplin#sub-notebooks
         # https://github.com/webdriverio/webdriverio/issues/4134
         # ActionChains(self.driver).drag_and_drop(
-        #    self.get_notebooks()[0], self.get_notebooks()[1]
+        #    self.get_notebooks()["items"][0], self.get_notebooks()["items"][1]
         # ).perform()
 
     def test_export_notebook(self):
@@ -241,10 +243,10 @@ class Tag(base.Test):
     #       self.driver.find_element_by_xpath("//div[@class='modal-layer']//input"))
     @base.run_again_at_failure
     def test_add_tag(self, way):
-        tag_count = len(self.api.get_tags())
+        tag_count = self.get_tag_count_api()
         self.add_tag(name=self._testMethodName, way=way)
         self.wait_for(
-            lambda: len(self.api.get_tags()) == tag_count + 1,
+            lambda: self.get_tag_count_api() == tag_count + 1,
             message=f"Adding tag by {way} failed.",
         )
 
@@ -252,7 +254,7 @@ class Tag(base.Test):
         self.skipTest("TODO: Running this test causes multiple tests to fail.")
 
         tag_element, _ = self.get_random_tag()
-        tag_count = len(self.api.get_tags())
+        tag_count = self.get_tag_count_api()
 
         # delete by right click
         ActionChains(self.driver).context_click(tag_element).perform()
@@ -274,7 +276,7 @@ class Tag(base.Test):
         self.fill_modal_dialog(new_name)
 
         # check against API reference
-        tags = self.api.get_tags()
+        tags = self.api.get_tags()["items"]
         renamed_tag = [tag for tag in tags if tag["id"] == tag_id][0]
         self.assertEqual(renamed_tag["title"], new_name)
 

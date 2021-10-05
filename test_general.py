@@ -74,7 +74,7 @@ class Go(base.Test):
     def setUpClass(cls):
         super().setUpClass()
         for key in GOTO_ANYTHING_MAP:
-            cls.api.add_note(name=key, content=key)
+            cls.api.add_note(title=key, content=key)
 
     def setUp(self):
         super().setUp()

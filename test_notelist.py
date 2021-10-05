@@ -61,10 +61,10 @@ class Note(base.Test):
         itertools.product(("note", "todo"), ("button", "hotkey", "top_menu"))
     )
     def test_add(self, type_, way):
-        note_count = len(self.api.get_notes(parent_id=self.notebook_id))
+        note_count = self.get_note_count_api()
         self.add_note(title=self._testMethodName, way=way, todo=type_ == "todo")
         self.wait_for(
-            lambda: len(self.api.get_notes(self.notebook_id)) == note_count + 1,
+            lambda: self.get_note_count_api() == note_count + 1,
             message=f"Adding note by {way} failed.",
         )
 
@@ -74,26 +74,26 @@ class Note(base.Test):
         # TODO: check if correct note got deleted
 
         note_element, _, _, _ = self.select_random_note(exclude=[self.note_id])
-        note_count = len(self.api.get_notes())
+        note_count = self.get_note_count_api()
         self.delete_note(note_element, way=way)
         self.wait_for(
-            lambda: len(self.api.get_notes()) == note_count - 1,
+            lambda: self.get_note_count_api() == note_count - 1,
             message=f"Deleting note by {way} failed.",
         )
 
     def test_duplicate_note(self):
-        note_count = len(self.api.get_notes())
+        note_count = self.get_note_count_api()
 
         # duplicate by right click
         ActionChains(self.driver).context_click(self.note).perform()
         menu.choose_entry(3)
 
         self.wait_for(
-            lambda: len(self.api.get_notes()) == note_count + 1,
+            lambda: self.get_note_count_api() == note_count + 1,
             message="Duplicating note by right click failed.",
         )
 
-        notes = self.api.get_notes(query={"fields": "parent_id,title,body"})
+        notes = self.api.get_notes(fields="parent_id,title,body")["items"]
         duplicated_notes = [
             note for note in notes if note["title"].startswith(self.note.text)
         ]
@@ -111,9 +111,7 @@ class Note(base.Test):
 
         def is_todo():
             return bool(
-                self.api.get_note(id_=self.note_id, query={"fields": "is_todo"})[
-                    "is_todo"
-                ]
+                self.api.get_note(id_=self.note_id, fields="is_todo")["is_todo"]
             )
 
         initial = is_todo()
@@ -124,15 +122,13 @@ class Note(base.Test):
 
     def test_complete_todo(self):
         id_ = self.new_id()
-        self.api.add_note(self._testMethodName, id_=id_, todo=True)
+        self.api.add_note(id_=id_, title=self._testMethodName, is_todo=int(True))
         todo_checkbox = self.find_element_present(
             By.XPATH, f"//a[@data-id='{id_}']/..//input"
         )
 
         def todo_completed():
-            return self.api.get_note(id_=id_, query={"fields": "todo_completed"})[
-                "todo_completed"
-            ]
+            return self.api.get_note(id_=id_, fields="todo_completed")["todo_completed"]
 
         self.assertEqual(todo_completed(), 0)
         t_start = time.time() * 1000  # ms

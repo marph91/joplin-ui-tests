@@ -26,7 +26,7 @@ class Header(base.Test):
             )
 
         id_ = self.new_id()
-        self.api.add_note(name=self._testMethodName, id_=id_)
+        self.api.add_note(title=self._testMethodName, id_=id_)
         note_element = self.find_element_present(By.XPATH, f"//a[@data-id='{id_}']")
         note_element.click()
 
