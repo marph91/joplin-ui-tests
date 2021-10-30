@@ -2,7 +2,6 @@
 
 import logging
 import time
-from typing import Optional
 
 from joppy.api import Api
 import requests

@@ -25,7 +25,8 @@ def download_chromedriver(destination: str = "./bin/chromedriver"):
     """
     if not os.path.exists(destination):
         response = requests.get(
-            "https://chromedriver.storage.googleapis.com/85.0.4183.87/chromedriver_linux64.zip"  # pylint: disable=line-too-long
+            "https://chromedriver.storage.googleapis.com/94.0.4606.61/"
+            "chromedriver_linux64.zip"
         )
         response.raise_for_status()
         with zipfile.ZipFile(io.BytesIO(response.content)) as chromedriver_zip:
@@ -40,7 +41,8 @@ def download_joplin(destination: str = "./bin/joplin.AppImage"):
     if not os.path.exists(destination):
         # TODO: How to download the latest release?
         response = requests.get(
-            "https://github.com/laurent22/joplin/releases/download/v2.4.8/Joplin-2.4.8.AppImage"  # pylint: disable=line-too-long
+            "https://github.com/laurent22/joplin/releases/download/v2.5.7/"
+            "Joplin-2.5.7.AppImage"
         )
         response.raise_for_status()
         with open(destination, "wb") as outfile:
@@ -70,6 +72,7 @@ driver = webdriver.remote.webdriver.WebDriver(
             # https://stackoverflow.com/a/51350140/7410886
             # https://source.chromium.org/chromium/chromium/src/+/main:chrome/test/chromedriver/chrome_launcher.cc;l=188
             "excludeSwitches": [
+                "allow-pre-commit-input",
                 "disable-background-networking",
                 "disable-client-side-phishing-detection",
                 "disable-default-apps",
