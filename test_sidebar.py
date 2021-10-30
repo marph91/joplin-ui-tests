@@ -187,7 +187,7 @@ class Notebook(base.Test):
         # doc: https://github.com/laurent22/joplin#sub-notebooks
         # https://github.com/webdriverio/webdriverio/issues/4134
         # ActionChains(self.driver).drag_and_drop(
-        #    self.get_notebooks()["items"][0], self.get_notebooks()["items"][1]
+        #    self.get_notebooks()[0], self.get_notebooks()[-1]
         # ).perform()
 
     def test_export_notebook(self):

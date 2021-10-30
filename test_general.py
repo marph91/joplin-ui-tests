@@ -33,7 +33,7 @@ ZOOM_MAP = {
 
 GOTO_ANYTHING_MAP = {
     "hotkey": lambda: pyautogui.hotkey("ctrl", "p"),
-    "top_menu": lambda: menu.top(["Go", "Goto anything"]),
+    "top_menu": lambda: menu.top(["Go", "Goto anything"], skip={"Goto anything": 1}),
 }
 
 # Order is mixed to don't select the same location twice.
@@ -69,6 +69,7 @@ TOGGLE_MAP = {
 
 class Go(base.Test):
     notebook = None
+    notebook_id = None
     base_element_map = None
 
     @classmethod
@@ -76,12 +77,14 @@ class Go(base.Test):
         super().setUpClass()
         for key in GOTO_ANYTHING_MAP:
             cls.api.add_note(title=key, content=key)
+        # Needed for "test_goto_anything()".
+        cls.api.add_notebook(title="abc")
 
     def setUp(self):
         super().setUp()
         # Ensure the notebook is selected, in order to select the locations properly.
         if self.__class__.notebook is None:
-            self.__class__.notebook, _, _, _ = self.select_random_note()
+            _, _, self.__class__.notebook, self.__class__.notebook_id = self.select_random_note()
             self.__class__.base_element_map = {
                 "sidebar": self.sidebar,
                 "note_list": self.notelist,
@@ -132,20 +135,17 @@ class Go(base.Test):
 
     @parameterized.expand(GOTO_ANYTHING_MAP.keys())
     def test_goto_anything(self, way):
-        self.skipTest(
-            "TODO: It takes a long time until notes are available at 'goto anything'."
-        )
-        time.sleep(10)
+        # TODO: Extend test for tags and notes (slow).
 
+        # Select another notebook to ensure goto is working correctly.
+        self.select_random_notebook(exclude=[self.notebook_id])
+
+        time.sleep(0.1)  # TODO: Small delay, because else the menu doesn't open.
         GOTO_ANYTHING_MAP[way]()
         # Short waiting time to display the search results.
-        self.fill_modal_dialog(way, wait_before_confirm=0.2)
+        self.fill_modal_dialog(f"@{self.__class__.__name__}", wait_before_confirm=0.2)
 
-        note_title = self.editor.find_element(By.CLASS_NAME, "title-input")
-        self.assertEqual(note_title.get_attribute("value"), way)
-        # TODO: strip(), because sometimes an initial space is inserted.
-        note_editor = self.editor.find_element(By.CLASS_NAME, "codeMirrorEditor")
-        self.assertEqual(note_editor.text.strip(), way)
+        self.assertIn("selected", self.notebook.get_attribute("class"))
 
 
 class View(base.Test):
