@@ -81,8 +81,8 @@ class Test(unittest.TestCase):
         cls.sidebar = cls.find_element_present(
             cls, By.CLASS_NAME, "rli-sideBar", timeout=10
         )
-        cls.notebooks_title = cls.sidebar.find_element(By.XPATH,
-            "//div[@data-folder-id]"
+        cls.notebooks_title = cls.sidebar.find_element(
+            By.XPATH, "//div[@data-folder-id]"
         )
 
         cls.notelist = cls.driver.find_element(By.CLASS_NAME, "rli-noteList")
@@ -181,8 +181,8 @@ class Test(unittest.TestCase):
     def get_notes(self):
         logging.debug("UI: get notes")
         # Finds notes and todos.
-        return self.notelist.find_elements(By.XPATH,
-            "//div[contains(@class, '-list-item')]"
+        return self.notelist.find_elements(
+            By.XPATH, "//div[contains(@class, '-list-item')]"
         )
 
     def scroll_vertical(self, element, height: int):
@@ -216,8 +216,8 @@ class Test(unittest.TestCase):
                 and notebook["parent_id"] not in exclude
             ]
         notebook_id = random.choice(notebooks)["id"]
-        notebook_element = self.sidebar.find_element(By.XPATH,
-            f"//div[@data-folder-id='{notebook_id}']"
+        notebook_element = self.sidebar.find_element(
+            By.XPATH, f"//div[@data-folder-id='{notebook_id}']"
         )
         notebook_element.click()
         return notebook_element, notebook_id
@@ -244,8 +244,8 @@ class Test(unittest.TestCase):
         # Don't click the tag, since loading the note takes time.
         tags = self.api.get_tags()["items"]
         tag_id = random.choice(tags)["id"]
-        tag_element = self.driver.find_element(By.XPATH,
-            f"//div[@data-tag-id='{tag_id}']"
+        tag_element = self.driver.find_element(
+            By.XPATH, f"//div[@data-tag-id='{tag_id}']"
         )
         return tag_element, tag_id
 

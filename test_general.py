@@ -86,7 +86,9 @@ class Go(base.Test):
                 "sidebar": self.sidebar,
                 "note_list": self.notelist,
                 "note_title": self.editor.find_element(By.CLASS_NAME, "title-input"),
-                "note_body": self.editor.find_element(By.CLASS_NAME, "codeMirrorEditor"),
+                "note_body": self.editor.find_element(
+                    By.CLASS_NAME, "codeMirrorEditor"
+                ),
             }
 
     @parameterized.expand(

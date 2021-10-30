@@ -40,8 +40,8 @@ class Note(base.Test):
         logging.debug(f"UI: add note {title=}")
 
         if way == "button":
-            add_note_button = self.notelist.find_element(By.CLASS_NAME,
-                "new-todo-button" if todo else "new-note-button"
+            add_note_button = self.notelist.find_element(
+                By.CLASS_NAME, "new-todo-button" if todo else "new-note-button"
             )
             add_note_button.click()
         elif way == "hotkey":
@@ -54,7 +54,9 @@ class Note(base.Test):
 
         # Editor should be focused automatically.
         ActionChains(self.driver).send_keys(content)
-        title_input = self.editor.find_element(By.XPATH, "//input[@class='title-input']")
+        title_input = self.editor.find_element(
+            By.XPATH, "//input[@class='title-input']"
+        )
         title_input.send_keys(title)
 
     @parameterized.expand(

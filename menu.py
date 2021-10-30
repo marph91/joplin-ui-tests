@@ -47,7 +47,13 @@ TOP_MENU_LAYOUT = (
             ),
             Entry(
                 "Export all",
-                (Entry("JEX"), Entry("RAW"), Entry("MD"), Entry("HTML"), Entry("PDF"),),
+                (
+                    Entry("JEX"),
+                    Entry("RAW"),
+                    Entry("MD"),
+                    Entry("HTML"),
+                    Entry("PDF"),
+                ),
             ),
             Entry("Synchronize"),
             Entry("Print"),

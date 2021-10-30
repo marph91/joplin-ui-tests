@@ -21,8 +21,8 @@ class Header(base.Test):
 
     def test_note_properties(self):
         def get_note_properties():
-            return self.editor.find_elements(By.XPATH,
-                "//div[@class='note-property-box']/*[2]"
+            return self.editor.find_elements(
+                By.XPATH, "//div[@class='note-property-box']/*[2]"
             )
 
         id_ = self.new_id()
@@ -57,8 +57,8 @@ class Header(base.Test):
             self.assertEqual(note_properties[6].text, id_)  # id
         finally:
             # close the dialog, doesn't matter if ok or cancel
-            button = self.editor.find_element(By.XPATH,
-                "//div[@class='note-property-box']/../..//button"
+            button = self.editor.find_element(
+                By.XPATH, "//div[@class='note-property-box']/../..//button"
             )
             button.click()
 
@@ -88,15 +88,15 @@ class Editor(base.Test):
 
     @parameterized.expand(("button", "hotkey", "top_menu"))
     def test_toggle_layout(self, way):
-        editor = self.editor.find_element(By.XPATH,
-            "//div[@class='codeMirrorEditor']/.."
+        editor = self.editor.find_element(
+            By.XPATH, "//div[@class='codeMirrorEditor']/.."
         )
-        viewer = self.editor.find_element(By.XPATH,
-            "//iframe[@class='noteTextViewer']/.."
+        viewer = self.editor.find_element(
+            By.XPATH, "//iframe[@class='noteTextViewer']/.."
         )
 
         def viewer_is_displayed():
-            return not "max-width: 1px" in viewer.get_attribute("style")
+            return "max-width: 1px" not in viewer.get_attribute("style")
 
         self.assertTrue(editor.is_displayed())
         self.assertTrue(viewer_is_displayed())

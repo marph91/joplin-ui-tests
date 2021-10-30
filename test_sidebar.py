@@ -15,8 +15,8 @@ import menu
 class Sidebar(base.Test):
     def test_synchronise_button(self):
         # TODO: extend
-        self.sidebar.find_element(By.XPATH,
-            "//button/span[contains(@class, 'icon-sync')]"
+        self.sidebar.find_element(
+            By.XPATH, "//button/span[contains(@class, 'icon-sync')]"
         )
 
 
@@ -39,15 +39,15 @@ class Notebook(base.Test):
         logging.debug(f"UI: add notebook {name=}, {way=}")
 
         if way == "button":
-            add_notebook_button = self.sidebar.find_element(By.XPATH,
-                "//div[@data-folder-id]/following-sibling::button"
+            add_notebook_button = self.sidebar.find_element(
+                By.XPATH, "//div[@data-folder-id]/following-sibling::button"
             )
             add_notebook_button.click()
         elif way == "right_click":
             if parent is None:
                 # right click on the notebooks title at top
-                notebook_title = self.driver.find_element(By.XPATH,
-                    "//div[@data-folder-id]"
+                notebook_title = self.driver.find_element(
+                    By.XPATH, "//div[@data-folder-id]"
                 )
 
                 # first option of dropdown
@@ -136,8 +136,8 @@ class Notebook(base.Test):
     def test_note_count_label(self):
         self.skipTest("TODO: Resizing doesn't work. Is there a reliable way?")
         # Resize the sidebar to make all labels visible.
-        sidebar_resize = self.sidebar.find_element(By.XPATH,
-            "//div[contains(@style, 'col-resize')]"
+        sidebar_resize = self.sidebar.find_element(
+            By.XPATH, "//div[contains(@style, 'col-resize')]"
         )
         ActionChains(self.driver).click_and_hold(sidebar_resize).move_by_offset(
             100, 0
@@ -168,8 +168,8 @@ class Notebook(base.Test):
             )
 
     def test_notebook_collapsing(self):
-        notebooks_div = self.sidebar.find_element(By.XPATH,
-            "//div[starts-with(@class, 'folders')]"
+        notebooks_div = self.sidebar.find_element(
+            By.XPATH, "//div[starts-with(@class, 'folders')]"
         )
         self.assertTrue(notebooks_div.is_displayed())
         self.notebooks_title.click()
@@ -282,8 +282,8 @@ class Tag(base.Test):
         self.assertEqual(renamed_tag["title"], new_name)
 
     def test_tag_collapsing(self):
-        tag_title = self.sidebar.find_element(By.XPATH,
-            "//div/i[contains(@class, 'icon-tags')]/.."
+        tag_title = self.sidebar.find_element(
+            By.XPATH, "//div/i[contains(@class, 'icon-tags')]/.."
         )
         tag_div = self.sidebar.find_element(By.CLASS_NAME, "tags")
         self.assertTrue(tag_div.is_displayed())
