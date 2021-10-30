@@ -81,12 +81,12 @@ class Test(unittest.TestCase):
         cls.sidebar = cls.find_element_present(
             cls, By.CLASS_NAME, "rli-sideBar", timeout=10
         )
-        cls.notebooks_title = cls.sidebar.find_element_by_xpath(
+        cls.notebooks_title = cls.sidebar.find_element(By.XPATH,
             "//div[@data-folder-id]"
         )
 
-        cls.notelist = cls.driver.find_element_by_class_name("rli-noteList")
-        cls.editor = cls.driver.find_element_by_class_name("rli-editor")
+        cls.notelist = cls.driver.find_element(By.CLASS_NAME, "rli-noteList")
+        cls.editor = cls.driver.find_element(By.CLASS_NAME, "rli-editor")
 
     @classmethod
     def tearDownClass(cls):
@@ -176,12 +176,12 @@ class Test(unittest.TestCase):
     def get_notebooks(self):
         logging.debug("UI: get notebooks")
         # First match is the "All notes" button.
-        return self.sidebar.find_elements_by_class_name("list-item-container")[1:]
+        return self.sidebar.find_elements(By.CLASS_NAME, "list-item-container")[1:]
 
     def get_notes(self):
         logging.debug("UI: get notes")
         # Finds notes and todos.
-        return self.notelist.find_elements_by_xpath(
+        return self.notelist.find_elements(By.XPATH,
             "//div[contains(@class, '-list-item')]"
         )
 
@@ -216,7 +216,7 @@ class Test(unittest.TestCase):
                 and notebook["parent_id"] not in exclude
             ]
         notebook_id = random.choice(notebooks)["id"]
-        notebook_element = self.sidebar.find_element_by_xpath(
+        notebook_element = self.sidebar.find_element(By.XPATH,
             f"//div[@data-folder-id='{notebook_id}']"
         )
         notebook_element.click()
@@ -244,7 +244,7 @@ class Test(unittest.TestCase):
         # Don't click the tag, since loading the note takes time.
         tags = self.api.get_tags()["items"]
         tag_id = random.choice(tags)["id"]
-        tag_element = self.driver.find_element_by_xpath(
+        tag_element = self.driver.find_element(By.XPATH,
             f"//div[@data-tag-id='{tag_id}']"
         )
         return tag_element, tag_id
@@ -261,7 +261,7 @@ class Test(unittest.TestCase):
         dialog = self.find_element_visible(
             By.XPATH, "//div[@class='modal-layer'][contains(@style, 'display: flex')]"
         )
-        input_element = dialog.find_element_by_tag_name("input")
+        input_element = dialog.find_element(By.TAG_NAME, "input")
         # Sometimes clear() and other workarounds don't work.
         # Use backspace instead. It takes longer, but works reliably.
         # See: https://stackoverflow.com/a/50682169/7410886
@@ -274,7 +274,7 @@ class Test(unittest.TestCase):
             input_element.send_keys(Keys.ENTER)
         if confirm_by_button:
             # Assume the first button is to confirm.
-            confirm_button = dialog.find_element_by_tag_name("button")
+            confirm_button = dialog.find_element(By.TAG_NAME, "button")
             confirm_button.click()
         else:
             input_element.send_keys(Keys.ENTER)

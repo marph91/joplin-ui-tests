@@ -6,6 +6,7 @@ from parameterized import parameterized
 import pyautogui
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
 
 import base
 import menu
@@ -14,7 +15,7 @@ import menu
 class Sidebar(base.Test):
     def test_synchronise_button(self):
         # TODO: extend
-        self.sidebar.find_element_by_xpath(
+        self.sidebar.find_element(By.XPATH,
             "//button/span[contains(@class, 'icon-sync')]"
         )
 
@@ -38,14 +39,14 @@ class Notebook(base.Test):
         logging.debug(f"UI: add notebook {name=}, {way=}")
 
         if way == "button":
-            add_notebook_button = self.sidebar.find_element_by_xpath(
+            add_notebook_button = self.sidebar.find_element(By.XPATH,
                 "//div[@data-folder-id]/following-sibling::button"
             )
             add_notebook_button.click()
         elif way == "right_click":
             if parent is None:
                 # right click on the notebooks title at top
-                notebook_title = self.driver.find_element_by_xpath(
+                notebook_title = self.driver.find_element(By.XPATH,
                     "//div[@data-folder-id]"
                 )
 
@@ -135,7 +136,7 @@ class Notebook(base.Test):
     def test_note_count_label(self):
         self.skipTest("TODO: Resizing doesn't work. Is there a reliable way?")
         # Resize the sidebar to make all labels visible.
-        sidebar_resize = self.sidebar.find_element_by_xpath(
+        sidebar_resize = self.sidebar.find_element(By.XPATH,
             "//div[contains(@style, 'col-resize')]"
         )
         ActionChains(self.driver).click_and_hold(sidebar_resize).move_by_offset(
@@ -144,7 +145,7 @@ class Notebook(base.Test):
 
         def get_note_count_by_label(notebook) -> int:
             try:
-                note_label = notebook.find_element_by_class_name("note-count-label")
+                note_label = notebook.find_element(By.CLASS_NAME, "note-count-label")
                 self.assertTrue(note_label.is_displayed())
                 actual = int(note_label.text)
             except (NoSuchElementException, ValueError):
@@ -167,7 +168,7 @@ class Notebook(base.Test):
             )
 
     def test_notebook_collapsing(self):
-        notebooks_div = self.sidebar.find_element_by_xpath(
+        notebooks_div = self.sidebar.find_element(By.XPATH,
             "//div[starts-with(@class, 'folders')]"
         )
         self.assertTrue(notebooks_div.is_displayed())
@@ -177,7 +178,7 @@ class Notebook(base.Test):
         self.assertTrue(notebooks_div.is_displayed())
 
     def test_show_all_notes(self):
-        all_notes_button = self.sidebar.find_element_by_class_name("all-notes")
+        all_notes_button = self.sidebar.find_element(By.CLASS_NAME, "all-notes")
         all_notes_button.click()
         self.wait_for(lambda: len(self.get_notes()) == self.get_note_count_api())
 
@@ -219,7 +220,7 @@ class Tag(base.Test):
         logging.debug(f"UI: add tag {name=}, {way=}")
 
         if way == "bottom_bar":
-            bottom_bar = self.editor.find_element_by_xpath("//div[@class='tag-bar']/a")
+            bottom_bar = self.editor.find_element(By.XPATH, "//div[@class='tag-bar']/a")
             bottom_bar.click()
         elif way == "hotkey":
             pyautogui.hotkey("ctrl", "alt", "t")
@@ -240,7 +241,7 @@ class Tag(base.Test):
     # - Disable the sidepanel
     # - Check if correct element is focussed:
     #   self.is_focussed(
-    #       self.driver.find_element_by_xpath("//div[@class='modal-layer']//input"))
+    #       self.driver.find_element(By.XPATH, "//div[@class='modal-layer']//input"))
     @base.run_again_at_failure
     def test_add_tag(self, way):
         tag_count = self.get_tag_count_api()
@@ -281,10 +282,10 @@ class Tag(base.Test):
         self.assertEqual(renamed_tag["title"], new_name)
 
     def test_tag_collapsing(self):
-        tag_title = self.sidebar.find_element_by_xpath(
+        tag_title = self.sidebar.find_element(By.XPATH,
             "//div/i[contains(@class, 'icon-tags')]/.."
         )
-        tag_div = self.sidebar.find_element_by_class_name("tags")
+        tag_div = self.sidebar.find_element(By.CLASS_NAME, "tags")
         self.assertTrue(tag_div.is_displayed())
         tag_title.click()
         self.assertFalse(tag_div.is_displayed())

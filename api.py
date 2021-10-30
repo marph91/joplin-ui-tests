@@ -19,12 +19,12 @@ WebDriverWait(driver, 10).until(
 
 # activate the api if not already done
 menu.top(["Tools", "Options"])
-web_clipper_tab = driver.find_element_by_xpath("//a/span[text()='Web Clipper']")
+web_clipper_tab = driver.find_element(By.XPATH, "//a/span[text()='Web Clipper']")
 web_clipper_tab.click()
-api = Api(driver.find_element_by_xpath("//span[string-length(text())=128]").text)
+api = Api(driver.find_element(By.XPATH, "//span[string-length(text())=128]").text)
 
 # avoid any language specific locators
-buttons = driver.find_elements_by_tag_name("button")
+buttons = driver.find_elements(By.TAG_NAME, "button")
 try:
     api.ping()
 except requests.exceptions.ConnectionError:

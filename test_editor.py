@@ -21,7 +21,7 @@ class Header(base.Test):
 
     def test_note_properties(self):
         def get_note_properties():
-            return self.editor.find_elements_by_xpath(
+            return self.editor.find_elements(By.XPATH,
                 "//div[@class='note-property-box']/*[2]"
             )
 
@@ -35,12 +35,12 @@ class Header(base.Test):
             (datetime.now() - timedelta(minutes=1)).strftime("%d/%m/%Y %H:%M"),
             datetime.now().strftime("%d/%m/%Y %H:%M"),
         )
-        timelabel = self.editor.find_element_by_class_name("updated-time-label")
+        timelabel = self.editor.find_element(By.CLASS_NAME, "updated-time-label")
         self.assertIn(timelabel.text, valid_dates)
 
         # avoid language specific locators
-        editor_toolbar = self.editor.find_element_by_class_name("editor-toolbar")
-        toolbar_buttons = editor_toolbar.find_elements_by_class_name("button")
+        editor_toolbar = self.editor.find_element(By.CLASS_NAME, "editor-toolbar")
+        toolbar_buttons = editor_toolbar.find_elements(By.CLASS_NAME, "button")
         toolbar_buttons[-1].click()  # note properties
         try:
             note_properties = get_note_properties()
@@ -57,7 +57,7 @@ class Header(base.Test):
             self.assertEqual(note_properties[6].text, id_)  # id
         finally:
             # close the dialog, doesn't matter if ok or cancel
-            button = self.editor.find_element_by_xpath(
+            button = self.editor.find_element(By.XPATH,
                 "//div[@class='note-property-box']/../..//button"
             )
             button.click()
@@ -75,8 +75,8 @@ class Editor(base.Test):
     def toggle_layout(self, way="button"):
 
         if way == "button":
-            editor_toolbar = self.editor.find_element_by_class_name("editor-toolbar")
-            toolbar_buttons = editor_toolbar.find_elements_by_class_name("button")
+            editor_toolbar = self.editor.find_element(By.CLASS_NAME, "editor-toolbar")
+            toolbar_buttons = editor_toolbar.find_elements(By.CLASS_NAME, "button")
             toggle_layout_button = toolbar_buttons[2]
             toggle_layout_button.click()
         elif way == "hotkey":
@@ -88,10 +88,10 @@ class Editor(base.Test):
 
     @parameterized.expand(("button", "hotkey", "top_menu"))
     def test_toggle_layout(self, way):
-        editor = self.editor.find_element_by_xpath(
+        editor = self.editor.find_element(By.XPATH,
             "//div[@class='codeMirrorEditor']/.."
         )
-        viewer = self.editor.find_element_by_xpath(
+        viewer = self.editor.find_element(By.XPATH,
             "//iframe[@class='noteTextViewer']/.."
         )
 

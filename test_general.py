@@ -6,6 +6,7 @@ import time
 
 from parameterized import parameterized
 import pyautogui
+from selenium.webdriver.common.by import By
 
 import base
 import menu
@@ -84,8 +85,8 @@ class Go(base.Test):
             self.__class__.base_element_map = {
                 "sidebar": self.sidebar,
                 "note_list": self.notelist,
-                "note_title": self.editor.find_element_by_class_name("title-input"),
-                "note_body": self.editor.find_element_by_class_name("codeMirrorEditor"),
+                "note_title": self.editor.find_element(By.CLASS_NAME, "title-input"),
+                "note_body": self.editor.find_element(By.CLASS_NAME, "codeMirrorEditor"),
             }
 
     @parameterized.expand(
@@ -138,10 +139,10 @@ class Go(base.Test):
         # Short waiting time to display the search results.
         self.fill_modal_dialog(way, wait_before_confirm=0.2)
 
-        note_title = self.editor.find_element_by_class_name("title-input")
+        note_title = self.editor.find_element(By.CLASS_NAME, "title-input")
         self.assertEqual(note_title.get_attribute("value"), way)
         # TODO: strip(), because sometimes an initial space is inserted.
-        note_editor = self.editor.find_element_by_class_name("codeMirrorEditor")
+        note_editor = self.editor.find_element(By.CLASS_NAME, "codeMirrorEditor")
         self.assertEqual(note_editor.text.strip(), way)
 
 
