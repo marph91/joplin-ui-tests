@@ -127,7 +127,7 @@ class Notebook(base.Test):
         self.fill_modal_dialog(new_name)
 
         # check against API reference
-        notebooks = self.api.get_notebooks()["items"]
+        notebooks = self.api.get_all_notebooks()
         renamed_notebook = [
             notebook for notebook in notebooks if notebook["id"] == self.notebook_id
         ][0]
@@ -159,7 +159,7 @@ class Notebook(base.Test):
             # Sometimes the note count needs time to update.
             self.wait_for(
                 lambda: len(
-                    self.api.get_notes(
+                    self.api.get_all_notes(
                         notebook_id=notebook.get_attribute("data-folder-id")
                     )
                 )
@@ -263,7 +263,7 @@ class Tag(base.Test):
         menu.choose_entry(1, key="left")
 
         self.wait_for(
-            lambda: len(self.api.get_tags()) == tag_count - 1,
+            lambda: len(self.api.get_all_tags()) == tag_count - 1,
             message="Deleting tag by right click failed.",
         )
 
@@ -277,7 +277,7 @@ class Tag(base.Test):
         self.fill_modal_dialog(new_name)
 
         # check against API reference
-        tags = self.api.get_tags()["items"]
+        tags = self.api.get_all_tags()
         renamed_tag = [tag for tag in tags if tag["id"] == tag_id][0]
         self.assertEqual(renamed_tag["title"], new_name)
 

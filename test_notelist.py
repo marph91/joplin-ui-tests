@@ -95,7 +95,7 @@ class Note(base.Test):
             message="Duplicating note by right click failed.",
         )
 
-        notes = self.api.get_notes(fields="parent_id,title,body")["items"]
+        notes = self.api.get_all_notes(fields="parent_id,title,body")
         duplicated_notes = [
             note for note in notes if note["title"].startswith(self.note.text)
         ]

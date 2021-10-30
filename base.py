@@ -206,7 +206,7 @@ class Test(unittest.TestCase):
         menu.choose_entry(1, key="left")
 
     def select_random_notebook(self, exclude: Optional[List[str]] = None):
-        notebooks = self.api.get_notebooks()["items"]
+        notebooks = self.api.get_all_notebooks()
         if exclude is not None:
             # TODO: Could be problematic for multiple time nested notebook.
             notebooks = [
@@ -223,7 +223,7 @@ class Test(unittest.TestCase):
         return notebook_element, notebook_id
 
     def select_random_note(self, exclude: Optional[List[str]] = None):
-        notes = self.api.get_notes()["items"]
+        notes = self.api.get_all_notes()
         if exclude is not None:
             notes = [note for note in notes if note["id"] not in exclude]
         note = random.choice(notes)
@@ -242,7 +242,7 @@ class Test(unittest.TestCase):
 
     def get_random_tag(self):
         # Don't click the tag, since loading the note takes time.
-        tags = self.api.get_tags()["items"]
+        tags = self.api.get_all_tags()
         tag_id = random.choice(tags)["id"]
         tag_element = self.driver.find_element(
             By.XPATH, f"//div[@data-tag-id='{tag_id}']"
@@ -280,10 +280,10 @@ class Test(unittest.TestCase):
             input_element.send_keys(Keys.ENTER)
 
     def get_notebook_count_api(self):
-        return len(self.api.get_notebooks()["items"])
+        return len(self.api.get_all_notebooks())
 
     def get_note_count_api(self):
-        return len(self.api.get_notes()["items"])
+        return len(self.api.get_all_notes())
 
     def get_tag_count_api(self):
-        return len(self.api.get_tags()["items"])
+        return len(self.api.get_all_tags())
