@@ -143,7 +143,7 @@ class Note(base.Test):
         todo_checkbox.click()
         self.wait_for(lambda: todo_completed() == 0)
 
-    def test_markdown_link(self):
+    def test_get_link(self):
         try:
             pyperclip.paste()
         except pyperclip.PyperclipException:

@@ -182,7 +182,7 @@ class Notebook(base.Test):
         all_notes_button.click()
         self.wait_for(lambda: len(self.get_notes()) == self.get_note_count_api())
 
-    def test_drag_notebooks(self):
+    def test_drag_notebook(self):
         self.skipTest("Drag and drop doesn't seem to work yet.")
         # doc: https://github.com/laurent22/joplin#sub-notebooks
         # https://github.com/webdriverio/webdriverio/issues/4134
