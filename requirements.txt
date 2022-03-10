@@ -1,8 +1,8 @@
-joppy
-parameterized
-Pillow
-pyautogui
-pyperclip
-requests
-selenium
-xvfbwrapper
+joppy==0.0.6
+parameterized==0.8.1
+Pillow==8.3.1
+pyautogui==0.9.53
+pyperclip==1.8.2
+requests==2.27.1
+selenium==4.0.0
+xvfbwrapper==0.2.9
