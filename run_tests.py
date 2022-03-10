@@ -124,10 +124,11 @@ def run_tests(args):
             else:
                 suite = unittest.TestSuite()
                 suite.addTests(unittest.TestLoader().loadTestsFromName(args.testname))
-            runner.run(suite)
+            result = runner.run(suite)
         finally:
             driver.driver.quit()
             driver.chromedriver_service.stop()
+            exit(0 if result.wasSuccessful() else 1)
 
 
 def main():
