@@ -17,7 +17,7 @@ sudo apt install ffmpeg xvfb
 pip install -r requirements.txt
 ```
 
-## Test verview
+## Test Overview
 
 ### What is tested?
 
