@@ -253,13 +253,17 @@ class Test(unittest.TestCase):
         self,
         input_: str,
         confirm_by_button: bool = False,
+        notebook: bool = False,
         tag: bool = False,
         wait_before_confirm: Optional[float] = None,
     ):
         """Fill out and confirm a modal dialog with one input."""
         # There are two modal dialogs. Chose the one that is displayed.
         dialog = self.find_element_visible(
-            By.XPATH, "//div[@class='modal-layer'][contains(@style, 'display: flex')]"
+            By.XPATH,
+            "//div[@class='dialog-root']"
+            if notebook
+            else "//div[@class='modal-layer'][contains(@style, 'display: flex')]",
         )
         input_element = dialog.find_element(By.TAG_NAME, "input")
         # Sometimes clear() and other workarounds don't work.

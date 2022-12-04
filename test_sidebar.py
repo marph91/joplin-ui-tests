@@ -68,7 +68,7 @@ class Notebook(base.Test):
         else:
             ValueError("Not supported")
 
-        self.fill_modal_dialog(name)
+        self.fill_modal_dialog(name, notebook=True)
 
     def delete_notebook(self, element):
         logging.debug("UI: delete notebook")
@@ -124,7 +124,7 @@ class Notebook(base.Test):
         # rename notebook via UI
         ActionChains(self.driver).context_click(self.notebook).perform()
         menu.choose_entry(3)
-        self.fill_modal_dialog(new_name)
+        self.fill_modal_dialog(new_name, notebook=True)
 
         # check against API reference
         notebooks = self.api.get_all_notebooks()
