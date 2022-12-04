@@ -5,6 +5,7 @@ import contextlib
 import logging
 import os
 import subprocess
+import sys
 import time
 import typing
 import unittest
@@ -117,6 +118,7 @@ def run_tests(args):
         # The driver should be started in the xvfb context.
         import driver  # pylint: disable=import-outside-toplevel
 
+        result = None
         try:
             runner = unittest.TextTestRunner(verbosity=args.verbosity)
             if args.testname is None:
@@ -128,7 +130,7 @@ def run_tests(args):
         finally:
             driver.driver.quit()
             driver.chromedriver_service.stop()
-            exit(0 if result.wasSuccessful() else 1)
+            sys.exit(0 if result is not None and result.wasSuccessful() else 1)
 
 
 def main():

@@ -84,7 +84,12 @@ class Go(base.Test):
         super().setUp()
         # Ensure the notebook is selected, in order to select the locations properly.
         if self.__class__.notebook is None:
-            _, _, self.__class__.notebook, self.__class__.notebook_id = self.select_random_note()
+            (
+                _,
+                _,
+                self.__class__.notebook,
+                self.__class__.notebook_id,
+            ) = self.select_random_note()
             self.__class__.base_element_map = {
                 "sidebar": self.sidebar,
                 "note_list": self.notelist,

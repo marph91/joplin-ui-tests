@@ -26,7 +26,8 @@ def download_chromedriver(destination: str = "./bin/chromedriver"):
     if not os.path.exists(destination):
         response = requests.get(
             "https://chromedriver.storage.googleapis.com/93.0.4577.63/"
-            "chromedriver_linux64.zip"
+            "chromedriver_linux64.zip",
+            timeout=30,
         )
         response.raise_for_status()
         with zipfile.ZipFile(io.BytesIO(response.content)) as chromedriver_zip:
@@ -42,7 +43,8 @@ def download_joplin(destination: str = "./bin/joplin.AppImage"):
         # TODO: How to download the latest release?
         response = requests.get(
             "https://github.com/laurent22/joplin/releases/download/v2.8.8/"
-            "Joplin-2.8.8.AppImage"
+            "Joplin-2.8.8.AppImage",
+            timeout=30,
         )
         response.raise_for_status()
         with open(destination, "wb") as outfile:
