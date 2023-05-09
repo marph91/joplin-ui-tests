@@ -52,7 +52,7 @@ def download_joplin(destination: str = "./bin/joplin.AppImage"):
     if not os.access(destination, os.X_OK):
         # readd the executable flag
         os.chmod(destination, os.stat(destination).st_mode | stat.S_IEXEC)
-    return destination
+    return os.getcwd() + "/" + destination
 
 
 chromedriver_service = webdriver.chrome.service.Service(download_chromedriver())
