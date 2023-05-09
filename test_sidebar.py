@@ -129,9 +129,9 @@ class Notebook(base.Test):
         # check against API reference
         notebooks = self.api.get_all_notebooks()
         renamed_notebook = [
-            notebook for notebook in notebooks if notebook["id"] == self.notebook_id
+            notebook for notebook in notebooks if notebook.id == self.notebook_id
         ][0]
-        self.assertEqual(renamed_notebook["title"], new_name)
+        self.assertEqual(renamed_notebook.title, new_name)
 
     def test_note_count_label(self):
         self.skipTest("TODO: Resizing doesn't work. Is there a reliable way?")
@@ -154,7 +154,7 @@ class Notebook(base.Test):
 
         # Add a note to have at least one notebook with content.
         self.api.add_note(title=self._testMethodName)
-        notebooks = self.get_notebooks()["items"]
+        notebooks = self.get_notebooks().items
         for notebook in notebooks:
             # Sometimes the note count needs time to update.
             self.wait_for(
@@ -278,8 +278,8 @@ class Tag(base.Test):
 
         # check against API reference
         tags = self.api.get_all_tags()
-        renamed_tag = [tag for tag in tags if tag["id"] == tag_id][0]
-        self.assertEqual(renamed_tag["title"], new_name)
+        renamed_tag = [tag for tag in tags if tag.id == tag_id][0]
+        self.assertEqual(renamed_tag.title, new_name)
 
     def test_tag_collapsing(self):
         tag_title = self.sidebar.find_element(

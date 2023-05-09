@@ -73,7 +73,6 @@ class Editor(base.Test):
             self.__class__.note, _, _, _ = self.select_random_note()
 
     def toggle_layout(self, way="button"):
-
         if way == "button":
             editor_toolbar = self.editor.find_element(By.CLASS_NAME, "editor-toolbar")
             toolbar_buttons = editor_toolbar.find_elements(By.CLASS_NAME, "button")

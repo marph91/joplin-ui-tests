@@ -212,10 +212,9 @@ class Test(unittest.TestCase):
             notebooks = [
                 notebook
                 for notebook in notebooks
-                if notebook["id"] not in exclude
-                and notebook["parent_id"] not in exclude
+                if notebook.id not in exclude and notebook.parent_id not in exclude
             ]
-        notebook_id = random.choice(notebooks)["id"]
+        notebook_id = random.choice(notebooks).id
         notebook_element = self.sidebar.find_element(
             By.XPATH, f"//div[@data-folder-id='{notebook_id}']"
         )
@@ -225,25 +224,23 @@ class Test(unittest.TestCase):
     def select_random_note(self, exclude: Optional[List[str]] = None):
         notes = self.api.get_all_notes()
         if exclude is not None:
-            notes = [note for note in notes if note["id"] not in exclude]
+            notes = [note for note in notes if note.id not in exclude]
         note = random.choice(notes)
 
         # click containing folder to show note
         notebook_element = self.find_element_present(
-            By.XPATH, f"//div[@data-folder-id='{note['parent_id']}']"
+            By.XPATH, f"//div[@data-folder-id='{note.parent_id}']"
         )
         notebook_element.click()
 
-        note_element = self.find_element_present(
-            By.XPATH, f"//a[@data-id='{note['id']}']"
-        )
+        note_element = self.find_element_present(By.XPATH, f"//a[@data-id='{note.id}']")
         note_element.click()
-        return note_element, note["id"], notebook_element, note["parent_id"]
+        return note_element, note.id, notebook_element, note.parent_id
 
     def get_random_tag(self):
         # Don't click the tag, since loading the note takes time.
         tags = self.api.get_all_tags()
-        tag_id = random.choice(tags)["id"]
+        tag_id = random.choice(tags).id
         tag_element = self.driver.find_element(
             By.XPATH, f"//div[@data-tag-id='{tag_id}']"
         )

@@ -1,8 +1,8 @@
 """Tests for the notelist in the center."""
 
+from datetime import datetime
 import itertools
 import logging
-import time
 
 from parameterized import parameterized
 import pyautogui
@@ -97,13 +97,11 @@ class Note(base.Test):
 
         notes = self.api.get_all_notes(fields="parent_id,title,body")
         duplicated_notes = [
-            note for note in notes if note["title"].startswith(self.note.text)
+            note for note in notes if note.title.startswith(self.note.text)
         ]
         self.assertEqual(len(duplicated_notes), 2)
-        self.assertEqual(
-            duplicated_notes[0]["parent_id"], duplicated_notes[1]["parent_id"]
-        )
-        self.assertEqual(duplicated_notes[0]["body"], duplicated_notes[1]["body"])
+        self.assertEqual(duplicated_notes[0].parent_id, duplicated_notes[1].parent_id)
+        self.assertEqual(duplicated_notes[0].body, duplicated_notes[1].body)
 
     def test_switch_type(self):
         def switch_type():
@@ -112,9 +110,7 @@ class Note(base.Test):
             menu.choose_entry(5)
 
         def is_todo():
-            return bool(
-                self.api.get_note(id_=self.note_id, fields="is_todo")["is_todo"]
-            )
+            return bool(self.api.get_note(id_=self.note_id, fields="is_todo").is_todo)
 
         initial = is_todo()
         switch_type()
@@ -130,18 +126,18 @@ class Note(base.Test):
         )
 
         def todo_completed():
-            return self.api.get_note(id_=id_, fields="todo_completed")["todo_completed"]
+            return self.api.get_note(id_=id_, fields="todo_completed").todo_completed
 
-        self.assertEqual(todo_completed(), 0)
-        t_start = time.time() * 1000  # ms
+        self.assertIsNone(todo_completed())
+        t_start = datetime.now()
         todo_checkbox.click()
-        t_end = time.time() * 1000  # ms
-        self.wait_for(lambda: todo_completed() != 0)
+        t_end = datetime.now()
+        self.wait_for(lambda: todo_completed() is not None)
         t_completed_api = todo_completed()
         self.assertGreaterEqual(t_completed_api, t_start)
         self.assertLessEqual(t_completed_api, t_end)
         todo_checkbox.click()
-        self.wait_for(lambda: todo_completed() == 0)
+        self.wait_for(lambda: todo_completed() is None)
 
     def test_get_link(self):
         try:
