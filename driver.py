@@ -15,7 +15,7 @@ from selenium import webdriver
 
 def download_chromedriver(destination: str = "./bin/chromedriver"):
     """
-    Electron app uses chrome 93.0.4577.82. Download the corresponding chromedriver.
+    Electron app uses chrome 102.0.5005.61. Download the corresponding chromedriver.
     How to obtain the correct chromedriver version for an electron app:
     1. Get electron version from projects "package.json".
     2. Check the electron-chrome mapping:
@@ -25,7 +25,7 @@ def download_chromedriver(destination: str = "./bin/chromedriver"):
     """
     if not os.path.exists(destination):
         response = requests.get(
-            "https://chromedriver.storage.googleapis.com/93.0.4577.63/"
+            "https://chromedriver.storage.googleapis.com/102.0.5005.61/"
             "chromedriver_linux64.zip",
             timeout=30,
         )
@@ -42,8 +42,8 @@ def download_joplin(destination: str = "./bin/joplin.AppImage"):
     if not os.path.exists(destination):
         # TODO: How to download the latest release?
         response = requests.get(
-            "https://github.com/laurent22/joplin/releases/download/v2.8.8/"
-            "Joplin-2.8.8.AppImage",
+            "https://github.com/laurent22/joplin/releases/download/v2.9.17/"
+            "Joplin-2.9.17.AppImage",
             timeout=30,
         )
         response.raise_for_status()
